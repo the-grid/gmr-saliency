@@ -20,5 +20,5 @@ Using
 ===
 
 ```
-make clean; make; ./out <file path>
+grunt
 ```
