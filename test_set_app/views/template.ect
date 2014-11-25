@@ -1,0 +1,18 @@
+{{ for set, images of @sets :}}
+
+  <section>
+    <h2>Test set: {{- set }}</h2>
+
+    {{ for img, i in images : }}
+      
+      <subsection>
+        <img src="../{{-img}}" />
+        <img src="../{{-img}}_saliency.png" /><br/>
+        <caption>({{- i}}) Test set: {{- set}}. File path: {{- img}}.</caption>
+      </subsection><br /><br />
+
+    {{ end }}
+
+  </section>
+
+{{ end }}
