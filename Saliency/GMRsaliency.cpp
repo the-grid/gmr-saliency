@@ -25,6 +25,8 @@ Mat GMRsaliency::GetSup(const Mat &image)
 	labels = slic.GetLabels();
 
 	// slic.WriteLabelsToFile("labels.png");
+	// slic.WriteCentroidsToFile("centroids.png");
+
 
 	return labels;
 }

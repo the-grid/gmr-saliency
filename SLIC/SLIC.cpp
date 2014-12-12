@@ -66,6 +66,7 @@ void SLIC::Run(const Mat original_image,
 				                           dy*j + dy/2 ));
 		}
 	}
+	this->centroids = centroids;
 
 	// Initialize labels width ones and distances with "infinity"
 	Mat labels = Mat(lab_image.size(), CV_32S, Scalar(1));
@@ -149,13 +150,24 @@ float SLIC::distance_between_points(Point2i coords1,
 	       spatial_distance;
 }
 
-void SLIC::WriteLabelsToFile(String file_path) {
-	imwrite(file_path, this->labels);
-}
-
 Mat SLIC::GetLabels() {
 	Mat int_labels;
 	this->labels.convertTo(int_labels, CV_16U);
 
 	return int_labels;
+}
+
+void SLIC::WriteLabelsToFile(String file_path) {
+	imwrite(file_path, this->labels);
+}
+
+void SLIC::WriteCentroidsToFile(String file_path) {
+	Mat bgr_image;
+	this->labels.convertTo(bgr_image, CV_Lab2BGR);
+
+	for (int i=0; i<this->centroids.size(); ++i) {
+		circle(bgr_image, Point(this->centroids[i].x, this->centroids[i].y), 2, Scalar(255, 0, 0), -1);
+	}
+
+	imwrite(file_path, bgr_image);
 }

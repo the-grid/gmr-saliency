@@ -25,6 +25,9 @@ public:
   // Write cluster labels to an image file
   void WriteLabelsToFile(String file_path);
 
+  // Write cluster centroids to an image file
+  void WriteCentroidsToFile(String file_path);
+
 private:
   int compactness;
   int S;
@@ -33,6 +36,7 @@ private:
   int height;
   int min_x;
   int min_y;
+  vector<Point2i> centroids;
   Mat labels;
   Mat image;
   Mat neighbors;
