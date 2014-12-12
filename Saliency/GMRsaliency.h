@@ -8,7 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <limits>
-#include "../Superpixel/SLIC.h"
+#include "../SLIC/SLIC.h"
 
 using namespace cv;
 
@@ -22,7 +22,7 @@ public:
 	Mat GetSal(Mat &img);
 
 private://parameters
-	int spcount;//superpxiels number
+  int spcount;
 	double compactness;//superpixels compactness
 	float alpha;//balance the fittness and smoothness
 	float delta;//contral the edge weight

@@ -1,19 +1,15 @@
 #include "GMRsaliency.h"
 
-
-
 using namespace std;
 typedef unsigned int UINT;
 
 GMRsaliency::GMRsaliency()
 {
-	//
-	spcount=200;
-	compactness=20.0;
+	spcount=225;
+	compactness=20;
 	alpha=0.99f;
 	delta=0.1f;
-	//
-	spcounta=0;
+	spcounta=spcount;
 }
 
 GMRsaliency::~GMRsaliency()
@@ -22,41 +18,15 @@ GMRsaliency::~GMRsaliency()
 
 Mat GMRsaliency::GetSup(const Mat &image)
 {
-	int width=image.cols;
-	int height=image.rows;
-	int sz = width*height;
-    UINT *img=new UINT[sz*3];
-	for(int c=0;c<3;c++)
-	{
-		for(int i=0;i<width;i++)
-		{
-			for(int j=0;j<height;j++)
-
-				img[c*(width*height)+i*height+j]=saturate_cast<unsigned int>(image.at<Vec3b>(j,i)[2-c]);
-		}
-	}
-	int* labels = new int[sz];
+	Mat labels;
 
 	SLIC slic;
-	slic.DoSuperpixelSegmentation_ForGivenNumberOfSuperpixels(img, height, width, labels, spcounta, spcount, compactness);	
+	slic.Run(image, spcount, compactness, 5);
+	labels = slic.GetLabels();
 
+	// slic.WriteLabelsToFile("labels.png");
 
-	Mat supLab(image.size(),CV_16U);
-	for(int i=0;i<supLab.rows;i++)
-	{
-		for(int j=0;j<supLab.cols;j++)
-		{
-			supLab.at<ushort>(i,j)=labels[i+j*supLab.rows];
-
-		}
-	}
-
-
-	if(labels) delete [] labels;
-	if(img) delete []img;
-
-	return supLab;
-
+	return labels;
 }
 
 Mat GMRsaliency::GetAdjLoop(const Mat &supLab)
@@ -381,7 +351,7 @@ Mat GMRsaliency::GetSal(Mat &img)
 	Mat fgy;
 	threshold(salb,fgy,thr,1,THRESH_BINARY);
 
-    Mat salf;
+  Mat salf;
 	salf=optAff*fgy;
 
 	Mat salMap(img.size(),CV_32F);

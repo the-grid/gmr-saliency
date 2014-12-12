@@ -1,5 +1,5 @@
 .DS_Store
 *.o
 test_set/
-out
 node_modules/
+bin/
