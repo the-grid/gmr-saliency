@@ -23,7 +23,7 @@ static void display_help(string program_name) {
 }
 
 int main(int argc, char *argv[]) {
-  if (argc < 1) {
+  if (argc < 2) {
     display_help(argv[0]);
     return 1;
   }
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
   vector<Point2f> center( contours.size() );
   vector<float> radius( contours.size() );
 
-  for (int i = 0; i < contours.size(); ++i) { 
+  for (size_t i = 0, max = contours.size(); i < max; ++i) { 
   	approxPolyDP( Mat(contours[i]), contours_poly[i], 3, true );
     boundRect[i] = boundingRect( Mat(contours_poly[i]) );
 		minEnclosingCircle( (Mat)contours_poly[i], center[i], radius[i] );
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
   // Find the biggest area of all contours
   int big_id = 0;
   double big_area = 0;
-  for (int i=0; i<contours.size(); ++i) {
+  for (size_t i = 0, max = contours.size(); i < max; ++i) { 
   	// Contour area
   	double area = contourArea(contours[i]);
   	if (area > big_area) {
@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
   // Center point
   circle( drawing, center[i], 3, Scalar(0,200,0), 2, 0, 0);
   // Contour points
-  for (int j=0; j<contours_poly[i].size(); ++j) {
+  for (size_t j=0, max = contours_poly[i].size(); j<max; ++j) {
   	circle( drawing, contours_poly[i][j], 3, Scalar(200,0,0), 2, 0, 0);
   }
   // cout << big_area << " " << contours[i].size() << " " << contours_poly[i].size() << endl;

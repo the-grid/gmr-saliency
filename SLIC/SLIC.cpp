@@ -60,8 +60,8 @@ void SLIC::Run(const Mat original_image,
 
 	// Initialize centroids on a regular grid
 	vector<Point2i> centroids;
-	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < N; ++j) {
+	for (size_t i = 0, max = N; i < max; ++i) {
+		for (size_t j = 0, max = N; j < max; ++j) {
 			centroids.push_back(Point2f( dx*i + dx/2, 
 				                           dy*j + dy/2 ));
 		}
@@ -80,10 +80,10 @@ void SLIC::Run(const Mat original_image,
 	Vec3f centroid_lab, neighbor_lab;
 	
 	// Iterate many times
-	for (int i = 0; i < max_iteration; ++i) {
+	for (size_t i = 0, max = max_iteration; i < max; ++i) {
 
 		// Iterate over all centroids (one label per centroid)
-		for (int centroid = 0; centroid < centroids.size(); ++centroid) {
+		for (size_t centroid = 0, max = centroids.size(); centroid < max; ++centroid) {
 			// Get centroid's coordiantes and CIELAB color
 			centroid_coords = centroids[centroid];
 			centroid_lab = lab_image.at<Vec3f>(centroid_coords);
@@ -92,8 +92,8 @@ void SLIC::Run(const Mat original_image,
 			find_neighbors_of(centroid_coords);
 			
 			// Update neighbors to their closest centroid (like K-means)
-			for (int i = 0; i < this->neighbors.rows; ++i) {
-				for (int j = 0; j < this->neighbors.cols; ++j) {
+			for (size_t i = 0, max = this->neighbors.rows; i < max; ++i) {
+				for (size_t j = 0, max = this->neighbors.cols; j < max; ++j) {
 					// Get centroid's neighbors coordinates and CIELAB color
 					neighbor_coords = Point2i(this->min_x + j, this->min_y + i);
 					neighbor_lab = lab_image.at<Vec3f>(neighbor_coords);
@@ -165,7 +165,7 @@ void SLIC::WriteCentroidsToFile(String file_path) {
 	Mat bgr_image;
 	this->labels.convertTo(bgr_image, CV_Lab2BGR);
 
-	for (int i=0; i<this->centroids.size(); ++i) {
+	for (size_t i=0, max = centroids.size(); i < max; ++i) {
 		circle(bgr_image, Point(this->centroids[i].x, this->centroids[i].y), 2, Scalar(255, 0, 0), -1);
 	}
 
