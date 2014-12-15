@@ -1,6 +1,6 @@
 CXX = g++
 
-SOURCES = runSaliency.cpp Saliency/GMRsaliency.cpp SLIC/SLIC.cpp
+SOURCES = saliency.cpp Saliency/GMRsaliency.cpp SLIC/SLIC.cpp
 OBJS = $(SOURCES:.cpp=.o)
 
 CXXFLAGS = -I. -I/usr/local/include \
@@ -13,7 +13,7 @@ LDFLAGS = -L/usr/lib -lopencv_calib3d -lopencv_contrib -lopencv_core -lopencv_fe
 	$(CXX) $(CXXFLAGS) -o $@ -c $^
 
 all: $(OBJS)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o bin/gmr-saliency $(OBJS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o bin/saliency $(OBJS)
 
 clean:
-	rm -rf *.o */*.o
+	rm -rf *.o */*.o bin/*

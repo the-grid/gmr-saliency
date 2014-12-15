@@ -16,6 +16,8 @@ date: 2014.11.28
 
 #define MAX_PATH 255
 
+RNG rng(12345);
+
 int main(int argc, char *argv[]) {
 	Mat sal, img;
 	char imname[MAX_PATH+1];
@@ -27,6 +29,6 @@ int main(int argc, char *argv[]) {
 	char salname[MAX_PATH+1];
 	sprintf(salname, "%s_saliency.png", imname);
 	imwrite(salname,sal*255);
-  
+
 	return 0;
 }

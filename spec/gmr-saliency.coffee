@@ -3,12 +3,12 @@ chai = require 'chai'
 path = require 'path'
 baseDir = path.resolve __dirname, '../'
 
-describe 'GMR Saliency', ->
+describe 'Saliency', ->
   out = null
 
   @timeout 4000
   before (done) ->
-    exec baseDir + '/bin/gmr-saliency ' + baseDir +  '/spec/fixtures/lenna.png', (err, stdout, stderr) ->
+    exec baseDir + '/bin/saliency ' + baseDir +  '/spec/fixtures/lenna.png', (err, stdout, stderr) ->
       if err
         done(err)
       else

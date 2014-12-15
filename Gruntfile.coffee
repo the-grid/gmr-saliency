@@ -55,10 +55,10 @@ module.exports = ->
 
       imgs = fs.readdirSync dir
       for img in imgs
-        unless /saliency|DS_Store/.test img
+        unless /filtered|threshold|contours|saliency|DS_Store/.test img
           abspath = dir + '/' + img
           console.log ' ' + abspath
-          execSync './gmr-saliency ' + abspath
+          execSync './bin/saliency ' + abspath
           console.log ' ' + abspath + ' finished.'
           data[set].push abspath
 

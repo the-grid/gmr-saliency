@@ -8,12 +8,12 @@ path = require('path');
 
 baseDir = path.resolve(__dirname, '../');
 
-describe('GMR Saliency', function() {
+describe('Saliency', function() {
   var out;
   out = null;
   this.timeout(4000);
   before(function(done) {
-    return exec(baseDir + '/bin/gmr-saliency ' + baseDir + '/spec/fixtures/lenna.png', function(err, stdout, stderr) {
+    return exec(baseDir + '/bin/saliency ' + baseDir + '/spec/fixtures/lenna.png', function(err, stdout, stderr) {
       if (err) {
         return done(err);
       } else {
