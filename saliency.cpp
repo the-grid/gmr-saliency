@@ -4,10 +4,13 @@
  */
 
 #include <cstring>
+#include <cstdio>
 #include <iostream>
 #include <string>
 #include <vector>
 #include "Saliency/GMRsaliency.h"
+
+using namespace std;
 
 RNG rng(12345);
 

@@ -5,6 +5,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
+#include <cstdio>
 #include <vector>
 #include <algorithm>
 #include <limits>
