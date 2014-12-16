@@ -10,6 +10,9 @@
 #include <vector>
 #include "Saliency/GMRsaliency.h"
 
+// #define DEBUG
+#undef DEBUG
+
 using namespace std;
 
 RNG rng(12345);
@@ -38,9 +41,11 @@ int main(int argc, char *argv[]) {
   Mat saliency_map;
 	saliency_map = GMRsal.GetSal(original_image);
 
+  #ifdef DEBUG
 	char file_path[256];
 	sprintf(file_path, "%s_saliency.png", original_image_path);
 	imwrite(file_path, saliency_map*255);
+  #endif
 
 	// Select just the most salient region, given a threshold value
 	// TODO: Try adaptive threshold? For now, OTSU's is the best
@@ -52,11 +57,14 @@ int main(int argc, char *argv[]) {
 	GaussianBlur(saliency_gray, saliency_gray, Size(1,1), 0, 0);
 	saliency_gray.convertTo(saliency_gray, CV_8U); // threshold needs an int Mat
 	threshold(saliency_gray, most_salient, threshold_value, 255, THRESH_BINARY + THRESH_OTSU);
+  #ifdef DEBUG
 	sprintf(file_path, "%s_threshold.png", original_image_path);
 	imwrite(file_path, most_salient);
+  #endif
 
 	// Eliminate small regions (Mat() == default 3x3 kernel)
 	Mat filtered;
+  // Another option is to use dilate/erode/dilate:
 	// dilate(most_salient, filtered, Mat(), Point(-1, -1), 2, 1, 1);
 	// erode(filtered, filtered, Mat(), Point(-1, -1), 4, 1, 1);
 	// dilate(filtered, filtered, Mat(), Point(-1, -1), 2, 1, 1);
@@ -72,11 +80,11 @@ int main(int argc, char *argv[]) {
 
   // Apply the specified morphology operation
   morphologyEx( most_salient, filtered, operation, element );
+  #ifdef DEBUG
   sprintf(file_path, "%s_filtered.png", original_image_path);
 	imwrite(file_path, filtered);
+  #endif
 
-	// Calculate the bounding box
-  
   // Find contours
   vector<vector<Point> > contours;
   vector<Vec4i> hierarchy;
@@ -107,6 +115,7 @@ int main(int argc, char *argv[]) {
   }
 
   int i = big_id;
+  #ifdef DEBUG
   // Draw polygonal contour + bonding rects + circles
   Mat drawing = Mat::zeros( filtered.size(), CV_8UC3 );
 	//Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
@@ -121,12 +130,24 @@ int main(int argc, char *argv[]) {
   for (size_t j=0, max = contours_poly[i].size(); j<max; ++j) {
   	circle( drawing, contours_poly[i][j], 3, Scalar(200,0,0), 2, 0, 0);
   }
-  // cout << big_area << " " << contours[i].size() << " " << contours_poly[i].size() << endl;
-  // cout << center[i] << endl;
-  // cout << contours_poly[i] << endl;
 
   sprintf(file_path, "%s_contours.png", original_image_path);
   imwrite(file_path, drawing);
+
+  cout << "area: " << big_area << endl;
+  cout << "num contours: " << contours_poly[i].size() << endl;
+  cout << "center point: " << center[i] << endl;
+  #endif
+
+  // Serialize as stringified JSON
+  // TODO: Use jsoncpp instead
+  cout << "{\"salient_polygon\": [";
+  size_t max = contours_poly[i].size()-1;
+  for (size_t j = 0; j < max; ++j) {
+    cout << "[" << contours_poly[i][j].x << ", " << contours_poly[i][j].y << "], ";
+  }
+  cout << "[" << contours_poly[i][max].x << "," << contours_poly[i][max].y << "]";
+  cout << "]}" << endl;
 
 	return 0;
 }
