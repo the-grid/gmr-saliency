@@ -1,10 +1,10 @@
 {
   "name": "gmr-saliency",
-  "description": "",
-  "version": "0.0.3",
+  "description": "GMR Saliency Map",
+  "version": "0.0.5",
   "repository": {
     "type": "git",
-    "url": "git://github.com/automata/gmr-saliency.git"
+    "url": "git://github.com/the-grid/gmr-saliency.git"
   },
   "licenses": [
     {
@@ -22,7 +22,12 @@
     "mocha": "~1.21.0"
   },
   "dependencies": {},
-  "keywords": [],
+  "keywords": [
+    "saliency",
+    "saliency map",
+    "computer vision",
+    "slic"
+  ],
   "scripts": {
     "test": "node_modules/.bin/grunt test"
   },
