@@ -58,7 +58,7 @@ module.exports = ->
         unless /filtered|threshold|contours|saliency|DS_Store/.test img
           abspath = dir + '/' + img
           console.log ' ' + abspath
-          execSync './bin/saliency ' + abspath
+          execSync './build/Release/saliency ' + abspath
           console.log ' ' + abspath + ' finished.'
           data[set].push abspath
 

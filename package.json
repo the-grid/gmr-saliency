@@ -1,7 +1,7 @@
 {
   "name": "gmr-saliency",
   "description": "GMR Saliency Map",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "repository": {
     "type": "git",
     "url": "git://github.com/the-grid/gmr-saliency.git"
@@ -31,5 +31,5 @@
   "scripts": {
     "test": "node_modules/.bin/grunt test"
   },
-  "main": "out"
+  "main": "build/Release/saliency"
 }
