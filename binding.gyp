@@ -11,8 +11,11 @@
         'Saliency/GMRsaliency.cpp',
         'SLIC/SLIC.cpp'
       ],
+      'libraries': [
+        '<!@(pkg-config --libs opencv)'
+      ],
       'include_dirs': [
-        '.'
+        '<!@(pkg-config opencv --cflags-only-I | sed s/-I//g)'
       ],
       'conditions': [
         ['OS=="mac"', {
@@ -34,23 +37,7 @@
               '-O3',
               '-Wall'
             ]
-          },
-          'libraries': [
-            '<!@(pkg-config --libs opencv)'
-          ],
-          'include_dirs': [
-            '<!@(pkg-config opencv --cflags-only-I | sed s/-I//g)'
-          ]
-        }],
-        ['OS=="linux"', {
-          'libraries!': [
-            '<!@(pkg-config --libs opencv)',
-            '-undefined dynamic_lookup'
-          ],
-          'cflags_cc!': [
-            '-fno-exceptions'
-          ],
-          'cflags': [ '-std=gnu++11', '-fexceptions' ]
+          }
         }]
       ]
     }
