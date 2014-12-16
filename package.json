@@ -1,7 +1,7 @@
 {
   "name": "gmr-saliency",
   "description": "GMR Saliency Map",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "repository": {
     "type": "git",
     "url": "git://github.com/the-grid/gmr-saliency.git"
