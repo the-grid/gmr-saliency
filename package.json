@@ -31,5 +31,8 @@
   "scripts": {
     "test": "node_modules/.bin/grunt test"
   },
-  "bin": "build/Release/saliency"
+  "bin": {
+    "saliency": "build/Release/saliency"
+  },
+  "main": "build/Release/saliency"
 }
