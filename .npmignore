@@ -1,1 +1,7 @@
-
+.lock-wscript
+.DS_Store
+*.o
+*.png
+test_set/
+node_modules/
+bin/saliency*
