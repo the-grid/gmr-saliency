@@ -2,6 +2,10 @@
   "name": "gmr-saliency",
   "description": "GMR Saliency Map",
   "version": "0.0.10",
+  "author": {
+    "name": "Vilson Vieira",
+    "email": "vilson@void.cc"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/the-grid/gmr-saliency.git"
@@ -19,9 +23,17 @@
     "grunt-coffeelint": "~0.0.10",
     "exec-sync": "~0.1.6",
     "grunt-contrib-coffee": "~0.12.0",
-    "mocha": "~1.21.0"
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-noflo-manifest": "^0.1.1",
+    "mocha": "~1.21.0",
+    "grunt-node-gyp": "~0.5.0",
+    "grunt-contrib-symlink": "~0.3.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "noflo": "~0.5.0",
+    "noflo-canvas": "^0.1.12",
+    "temporary": "0.0.8"
+  },
   "keywords": [
     "saliency",
     "saliency map",
@@ -30,6 +42,11 @@
   ],
   "scripts": {
     "test": "node_modules/.bin/grunt test"
+  },
+  "noflo": {
+    "components": {
+      "GetSaliency": "components/GetSaliency-node.coffee"
+    }
   },
   "bin": {
     "saliency": "build/Release/saliency"

@@ -11,6 +11,13 @@ module.exports = ->
   @initConfig
     pkg: @file.readJSON 'package.json'
 
+    # Updating the package manifest files
+    noflo_manifest:
+      update:
+        files:
+          'component.json': ['graphs/*', 'components/*']
+          'package.json': ['graphs/*', 'components/*']
+
     # CoffeeScript compilation
     coffee:
       spec:
@@ -30,21 +37,38 @@ module.exports = ->
         dest: 'test_set_app'
         ext: '.js'
 
-    # BDD tests
+    # Automated recompilation and testing when developing
+    watch:
+      files: ['spec/*.coffee', 'components/*.coffee']
+      tasks: ['test']
+
+    # BDD tests on Node.js
     cafemocha:
-      src: ['spec/*.coffee']
-      options:
-        reporter: 'spec'
+      nodejs:
+        src: ['spec/*.coffee']
+        options:
+          reporter: 'spec'
 
     # Coding standards
     coffeelint:
-      components: ['Gruntfile.coffee', 'spec/*.coffee', 'test_set_app/*.coffee']
+      components: ['components/*.coffee', 'Gruntfile.coffee', 'spec/*.coffee', 'test_set_app/*.coffee']
       options:
         'max_line_length':
           'level': 'ignore'
 
-  @registerTask 'make', 'Compile GMR Saliency', () ->
-    execSync 'make clean; make'
+    # Compiles GMR Saliency C++ code using node-gyp
+    gyp:
+      saliency:
+        command: 'rebuild'
+
+    # GMR Saliency doesn't has itself as dependency, so
+    # for tests, symlink the executable
+    symlink:
+      options:
+        overwrite: true
+      explicit:
+        src: 'build/Release/saliency'
+        dest: 'node_modules/.bin/saliency'
 
   @registerTask 'test_set', 'Test a set of images', () ->
     data = {}
@@ -65,17 +89,24 @@ module.exports = ->
     grunt.file.write './test_set_app/data.js', 'window.DATA = {sets:' + JSON.stringify(data, 1, 1) + '};'
 
   @registerTask 'test', 'Build and run automated tests', () =>
+    @task.run 'gyp'
+    @task.run 'symlink'
     @task.run 'coffeelint'
+    @task.run 'noflo_manifest'
     @task.run 'coffee:spec'
     @task.run 'cafemocha'
 
   # Grunt plugins used for building
+  @loadNpmTasks 'grunt-noflo-manifest'
   @loadNpmTasks 'grunt-contrib-coffee'
 
   # Grunt plugins used for testing
+  @loadNpmTasks 'grunt-contrib-watch'
   @loadNpmTasks 'grunt-cafe-mocha'
   @loadNpmTasks 'grunt-coffeelint'
+  @loadNpmTasks 'grunt-node-gyp'
+  @loadNpmTasks 'grunt-contrib-symlink'
 
-  # @registerTask 'test', ['test_sets']
-  @registerTask 'default', ['make', 'coffee', 'test']
+  @registerTask 'test_app', ['test_sets']
+  @registerTask 'default', ['test']
 

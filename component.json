@@ -1,0 +1,28 @@
+{
+  "name": "gmr-saliency",
+  "description": "GMR Saliency Map",
+  "author": "Vilson Vieira",
+  "repo": "the-grid/gmr-saliency",
+  "version": "0.0.10",
+  "keywords": [
+    "saliency",
+    "saliency map",
+    "computer vision",
+    "slic"
+  ],
+  "dependencies": {
+    "noflo/noflo": "*",
+    "noflo/noflo-canvas": "*"
+  },
+  "remotes": [
+    "https://raw.githubusercontent.com"
+  ],
+  "scripts": [
+    "spec/testutils.coffee",
+    "index.js",
+    "components/GetSaliency.coffee"
+  ],
+  "json": [
+    "component.json"
+  ]
+}
