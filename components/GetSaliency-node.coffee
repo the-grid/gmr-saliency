@@ -39,19 +39,19 @@ onEnd = (filePath, callback) ->
 exports.getComponent = ->
   c = new noflo.Component
 
-  c.outPorts.add 'polygon',
+  c.outPorts.add 'out',
     datatype: 'object'
 
   c.inPorts.add 'canvas', (event, payload) ->
     switch event
       when 'begingroup'
-        c.outPorts.polygon.beginGroup payload
+        c.outPorts.out.beginGroup payload
       when 'endgroup'
-        c.outPorts.polygon.endGroup payload
+        c.outPorts.out.endGroup payload
       when 'data'
         compute payload, (out) ->
-          c.outPorts.polygon.send out
+          c.outPorts.out.send out
       when 'disconnect'
-        c.outPorts.polygon.disconnect()
+        c.outPorts.out.disconnect()
 
   c

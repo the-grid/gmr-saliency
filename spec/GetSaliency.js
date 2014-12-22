@@ -14,23 +14,23 @@ if (!noflo.isBrowser()) {
 }
 
 describe('GetSaliency component', function() {
-  var c, inImage, outPolygon;
+  var c, inImage, out;
   c = null;
   inImage = null;
-  outPolygon = null;
+  out = null;
   beforeEach(function() {
     c = GetSaliency.getComponent();
     inImage = noflo.internalSocket.createSocket();
-    outPolygon = noflo.internalSocket.createSocket();
+    out = noflo.internalSocket.createSocket();
     c.inPorts.canvas.attach(inImage);
-    return c.outPorts.polygon.attach(outPolygon);
+    return c.outPorts.out.attach(out);
   });
   describe('when instantiated', function() {
     it('should have one input port', function() {
       return chai.expect(c.inPorts.canvas).to.be.an('object');
     });
     return it('should have one output port', function() {
-      return chai.expect(c.outPorts.polygon).to.be.an('object');
+      return chai.expect(c.outPorts.out).to.be.an('object');
     });
   });
   return describe('with file system image', function() {
@@ -39,10 +39,10 @@ describe('GetSaliency component', function() {
       this.timeout(10000);
       id = null;
       groups = [];
-      outPolygon.once('begingroup', function(group) {
+      out.once('begingroup', function(group) {
         return groups.push(group);
       });
-      outPolygon.once('data', function(res) {
+      out.once('data', function(res) {
         var saliency;
         chai.expect(res).to.be.an('object');
         saliency = res.saliency;

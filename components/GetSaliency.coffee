@@ -7,19 +7,19 @@ noflo = require 'noflo'
 exports.getComponent = ->
   c = new noflo.Component
 
-  c.outPorts.add 'polygon',
+  c.outPorts.add 'out',
     datatype: 'object'
 
   c.inPorts.add 'canvas', (event, payload) ->
     switch event
       when 'begingroup'
-        c.outPorts.polygon.beginGroup payload
+        c.outPorts.out.beginGroup payload
       when 'endgroup'
-        c.outPorts.polygon.endGroup payload
+        c.outPorts.out.endGroup payload
       when 'data'
-        c.outPorts.polygon.send
+        c.outPorts.out.send
           saliency: null
       when 'disconnect'
-        c.outPorts.polygon.disconnect()
+        c.outPorts.out.disconnect()
 
   c
