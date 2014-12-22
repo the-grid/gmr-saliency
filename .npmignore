@@ -4,4 +4,3 @@
 *.png
 test_set/
 node_modules/
-bin/saliency*
