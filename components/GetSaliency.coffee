@@ -18,7 +18,7 @@ exports.getComponent = ->
         c.outPorts.polygon.endGroup payload
       when 'data'
         c.outPorts.polygon.send
-          salient_polygon: []
+          saliency: null
       when 'disconnect'
         c.outPorts.polygon.disconnect()
 
