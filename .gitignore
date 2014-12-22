@@ -6,3 +6,8 @@ build
 test_set/
 node_modules/
 bin/saliency*
+/browser/
+/components/*/
+/spec/*.js
+/spec/*.xml
+flowhub.json

@@ -140,14 +140,19 @@ int main(int argc, char *argv[]) {
   #endif
 
   // Serialize as stringified JSON
-  // TODO: Use jsoncpp instead
-  cout << "{\"salient_polygon\": [";
+  // TODO: Use jsoncpp instead?
+  cout << "{\"saliency\": ";
+  cout << "{\"polygon\": [";
   size_t max = contours_poly[i].size()-1;
   for (size_t j = 0; j < max; ++j) {
-    cout << "[" << contours_poly[i][j].x << ", " << contours_poly[i][j].y << "], ";
+    cout << contours_poly[i][j] << ", ";
   }
-  cout << "[" << contours_poly[i][max].x << "," << contours_poly[i][max].y << "]";
-  cout << "]}" << endl;
+  cout << contours_poly[i][max] << "], ";
+  cout << "\"center\": [" << (int)center[i].x << ", " << (int)center[i].y << "], ";
+  cout << "\"radius\": " << radius[i] << ", ";
+  cout << "\"bounding_rect\": [" << boundRect[i].tl() << ", " << boundRect[i].br() << "]";
+  //cout << "\"map\": " << saliency_map;
+  cout << "}}" << endl;
 
 	return 0;
 }
