@@ -3,7 +3,7 @@ chai = require 'chai'
 path = require 'path'
 baseDir = path.resolve __dirname, '../'
 
-describe 'Saliency', ->
+describe 'GMR Saliency C++ exec', ->
   out = null
 
   @timeout 5000

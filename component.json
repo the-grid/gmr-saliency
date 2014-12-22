@@ -24,5 +24,10 @@
   ],
   "json": [
     "component.json"
-  ]
+  ],
+  "noflo": {
+    "components": {
+      "GetSaliency": "components/GetSaliency.coffee"
+    }
+  }
 }

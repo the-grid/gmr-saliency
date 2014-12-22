@@ -1,6 +1,5 @@
 noflo = require 'noflo'
 temporary = require 'temporary'
-#Canvas = require('noflo-canvas').canvas
 fs = require 'fs'
 exec = require('child_process').exec
 
@@ -39,14 +38,20 @@ onEnd = (filePath, callback) ->
 
 exports.getComponent = ->
   c = new noflo.Component
-  c.outPorts.add 'polygon'
+
+  c.outPorts.add 'polygon',
+    datatype: 'object'
+
   c.inPorts.add 'canvas', (event, payload) ->
-    if event is 'begingroup'
-      c.outPorts.polygon.beginGroup payload
-    if event is 'endgroup'
-      c.outPorts.polygon.endGroup payload
-    return unless event is 'data'
-    compute payload, (out) ->
-      c.outPorts.polygon.send out
+    switch event
+      when 'begingroup'
+        c.outPorts.polygon.beginGroup payload
+      when 'endgroup'
+        c.outPorts.polygon.endGroup payload
+      when 'data'
+        compute payload, (out) ->
+          c.outPorts.polygon.send out
+      when 'disconnect'
+        c.outPorts.polygon.disconnect()
 
   c
