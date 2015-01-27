@@ -1,0 +1,9 @@
+{
+  "name": "gmr-saliency",
+  "description": "GMR Saliency Map",
+  "repository": "https://github.com/the-grid/gmr-saliency",
+  "keywords": [ "saliency", "saliency map", "computer vision", "slic" ],
+  "env": {
+    "BUILDPACK_URL": "https://github.com/ddollar/heroku-buildpack-multi.git"
+  }
+}
