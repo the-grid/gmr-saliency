@@ -24,6 +24,7 @@ compute = (canvas, callback) ->
       # Call saliency on the temporary file
       onEnd tmpFile.path, callback
     catch e
+      callback e
       tmpFile.unlink()
 
 onEnd = (filePath, callback) ->
@@ -35,24 +36,28 @@ onEnd = (filePath, callback) ->
     else
       # Process the saliency output (parse and send)
       out = JSON.parse stdout
-      callback out
+      callback null, out
 
 exports.getComponent = ->
   c = new noflo.Component
 
   c.outPorts.add 'out',
     datatype: 'object'
+  c.outPorts.add 'error',
+    datatype: 'object'
+    required: false
 
-  c.inPorts.add 'canvas', (event, payload) ->
-    switch event
-      when 'begingroup'
-        c.outPorts.out.beginGroup payload
-      when 'endgroup'
-        c.outPorts.out.endGroup payload
-      when 'data'
-        compute payload, (out) ->
-          c.outPorts.out.send out
-      when 'disconnect'
-        c.outPorts.out.disconnect()
+  c.inPorts.add 'canvas',
+    datatype: 'object'
 
+  noflo.helpers.WirePattern c,
+    in: 'canvas'
+    out: 'out'
+    forwardGroups: true
+    async: true
+  , (payload, groups, out, callback) ->
+    compute payload, (err, val) ->
+      return callback err if err
+      out.send val
+      do callback
   c
