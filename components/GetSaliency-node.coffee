@@ -28,8 +28,8 @@ compute = (canvas, callback) ->
       tmpFile.unlink()
 
 onEnd = (filePath, callback) ->
-  saliencyBin = path.join __dirname, '../node_modules/.bin/saliency'
-  console.log 'passed on onEnd'
+  saliencyBin = path.join __dirname, '../build/Release/saliency'
+  console.log 'passed on onEnd', saliencyBin
 
   exec saliencyBin + ' ' + filePath, (err, stdout, stderr) ->
     if err
