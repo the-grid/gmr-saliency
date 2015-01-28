@@ -20,7 +20,6 @@ compute = (canvas, callback) ->
   stream.on 'data', (chunk) ->
     out.write(chunk)
   stream.on 'end', () ->
-    console.log 'passed on stream end'
     try
       # Call saliency on the temporary file
       onEnd tmpFile.path, callback
@@ -29,16 +28,13 @@ compute = (canvas, callback) ->
 
 onEnd = (filePath, callback) ->
   saliencyBin = path.join __dirname, '../build/Release/saliency'
-  console.log 'passed on onEnd', saliencyBin
 
   exec saliencyBin + ' ' + filePath, (err, stdout, stderr) ->
     if err
-      console.log 'exec saliencyBin:', err
       callback err
     else
       # Process the saliency output (parse and send)
       out = JSON.parse stdout
-      console.log 'passed on onEnd with success:', out
       callback out
 
 exports.getComponent = ->
