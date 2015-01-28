@@ -1,6 +1,7 @@
 noflo = require 'noflo'
 temporary = require 'temporary'
 fs = require 'fs'
+path = require 'path'
 exec = require('child_process').exec
 
 # @runtime noflo-nodejs
@@ -26,7 +27,7 @@ compute = (canvas, callback) ->
       tmpFile.unlink()
 
 onEnd = (filePath, callback) ->
-  saliencyBin = 'node_modules/.bin/saliency'
+  saliencyBin = path.join __dirname, '../node_modules/.bin/saliency'
 
   exec saliencyBin + ' ' + filePath, (err, stdout, stderr) ->
     if err
