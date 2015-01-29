@@ -2,7 +2,8 @@ fs = require 'fs'
 execSync = require('exec-sync')
 
 test_path = './test_set/'
-test_sets = ['Text', 'NonText']
+#test_sets = ['Text', 'NonText']
+test_sets = ['Grid']
 
 module.exports = ->
   grunt = @
@@ -80,6 +81,26 @@ module.exports = ->
       imgs = fs.readdirSync dir
       for img in imgs
         unless /filtered|threshold|contours|saliency|DS_Store/.test img
+          img = img.replace /\s/g, '\\ '
+          abspath = dir + '/' + img
+          console.log ' ' + abspath
+          execSync './build/Release/saliency ' + abspath
+          console.log ' ' + abspath + ' finished.'
+          data[set].push abspath
+
+    grunt.file.write './test_set_app/data.js', 'window.DATA = {sets:' + JSON.stringify(data, 1, 1) + '};'
+
+  @registerTask 'test_scale', 'Test if saliency performs well with scaled images', () ->
+    data = {}
+    for set in test_sets
+      console.log 'Testing set ' + set
+      data[set] = []
+      dir = test_path + set
+      
+      imgs = fs.readdirSync dir
+      for img in imgs
+        unless /filtered|threshold|contours|saliency|DS_Store/.test img
+          img = img.replace /\s/g, '\\ '
           abspath = dir + '/' + img
           console.log ' ' + abspath
           execSync './build/Release/saliency ' + abspath

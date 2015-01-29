@@ -22,15 +22,16 @@ compute = (canvas, callback) ->
   stream.on 'end', () ->
     try
       # Call saliency on the temporary file
-      onEnd tmpFile.path, callback
+      onEnd tmpFile, callback
     catch e
       callback e
       tmpFile.unlink()
 
-onEnd = (filePath, callback) ->
+onEnd = (tmpFile, callback) ->
   saliencyBin = path.join __dirname, '../build/Release/saliency'
 
-  exec saliencyBin + ' ' + filePath, (err, stdout, stderr) ->
+  exec saliencyBin + ' ' + tmpFile.path, (err, stdout, stderr) ->
+    tmpFile.unlink()
     if err
       callback err
     else
