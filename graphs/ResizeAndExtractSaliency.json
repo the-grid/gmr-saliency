@@ -1,0 +1,172 @@
+{
+    "properties": {
+        "name": "ResizeAndExtractSaliency",
+        "environment": {
+            "type": "noflo-nodejs"
+        }
+    },
+    "inports": {
+        "width": {
+            "process": "gmr-saliency/ResizeDimensions_tu4c3",
+            "port": "width",
+            "metadata": {
+                "x": 144,
+                "y": 72,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "height": {
+            "process": "gmr-saliency/ResizeDimensions_tu4c3",
+            "port": "height",
+            "metadata": {
+                "x": 144,
+                "y": 180,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "in": {
+            "process": "canvas/ResizeCanvas_6gnab",
+            "port": "in",
+            "metadata": {
+                "x": 144,
+                "y": 288,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "filename": {
+            "process": "canvas/SavePNG_gfn62",
+            "port": "filename",
+            "metadata": {
+                "x": 144,
+                "y": 396,
+                "width": 72,
+                "height": 72
+            }
+        }
+    },
+    "outports": {
+        "error": {
+            "process": "gmr-saliency/GetSaliency_kt1ts",
+            "port": "error",
+            "metadata": {
+                "x": 1008,
+                "y": 216,
+                "width": 72,
+                "height": 72
+            }
+        }
+    },
+    "groups": [],
+    "processes": {
+        "canvas/ResizeCanvas_6gnab": {
+            "component": "canvas/ResizeCanvas",
+            "metadata": {
+                "label": "canvas/ResizeCanvas",
+                "x": 612,
+                "y": 144,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "gmr-saliency/ResizeDimensions_tu4c3": {
+            "component": "gmr-saliency/ResizeDimensions",
+            "metadata": {
+                "label": "gmr-saliency/ResizeDimensions",
+                "x": 360,
+                "y": 108,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "gmr-saliency/GetSaliency_kt1ts": {
+            "component": "gmr-saliency/GetSaliency",
+            "metadata": {
+                "label": "gmr-saliency/GetSaliency",
+                "x": 828,
+                "y": 144,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "canvas/SavePNG_gfn62": {
+            "component": "canvas/SavePNG",
+            "metadata": {
+                "label": "canvas/SavePNG",
+                "x": 1008,
+                "y": 72,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "core/Output_wxqaz": {
+            "component": "core/Output",
+            "metadata": {
+                "label": "core/Output",
+                "x": 828,
+                "y": 252,
+                "width": 72,
+                "height": 72
+            }
+        }
+    },
+    "connections": [
+        {
+            "src": {
+                "process": "gmr-saliency/ResizeDimensions_tu4c3",
+                "port": "width"
+            },
+            "tgt": {
+                "process": "canvas/ResizeCanvas_6gnab",
+                "port": "width"
+            },
+            "metadata": {}
+        },
+        {
+            "src": {
+                "process": "gmr-saliency/ResizeDimensions_tu4c3",
+                "port": "height"
+            },
+            "tgt": {
+                "process": "canvas/ResizeCanvas_6gnab",
+                "port": "height"
+            },
+            "metadata": {}
+        },
+        {
+            "src": {
+                "process": "canvas/ResizeCanvas_6gnab",
+                "port": "out"
+            },
+            "tgt": {
+                "process": "gmr-saliency/GetSaliency_kt1ts",
+                "port": "canvas"
+            },
+            "metadata": {}
+        },
+        {
+            "src": {
+                "process": "gmr-saliency/GetSaliency_kt1ts",
+                "port": "out"
+            },
+            "tgt": {
+                "process": "canvas/SavePNG_gfn62",
+                "port": "canvas"
+            },
+            "metadata": {}
+        },
+        {
+            "src": {
+                "process": "gmr-saliency/GetSaliency_kt1ts",
+                "port": "error"
+            },
+            "tgt": {
+                "process": "core/Output_wxqaz",
+                "port": "in"
+            },
+            "metadata": {}
+        }
+    ]
+}
