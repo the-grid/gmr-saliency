@@ -53,7 +53,17 @@
             "port": "error",
             "metadata": {
                 "x": 1008,
-                "y": 216,
+                "y": 180,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "out": {
+            "process": "gmr-saliency/GetSaliency_kt1ts",
+            "port": "out",
+            "metadata": {
+                "x": 1008,
+                "y": -36,
                 "width": 72,
                 "height": 72
             }
@@ -105,8 +115,8 @@
             "component": "core/Output",
             "metadata": {
                 "label": "core/Output",
-                "x": 828,
-                "y": 252,
+                "x": 1008,
+                "y": 288,
                 "width": 72,
                 "height": 72
             }
