@@ -53,7 +53,7 @@
       "ResizeDimensions": "components/ResizeDimensions.coffee"
     },
     "graphs": {
-      "gmr-saliency/ResizeAndExtractSaliency": "graphs/ResizeAndExtractSaliency.json"
+      "ResizeAndExtractSaliency": "graphs/ResizeAndExtractSaliency.json"
     }
   },
   "bin": {
