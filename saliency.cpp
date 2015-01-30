@@ -134,9 +134,9 @@ int main(int argc, char *argv[]) {
   sprintf(file_path, "%s_contours.png", original_image_path);
   imwrite(file_path, drawing);
 
-  cout << "area: " << big_area << endl;
-  cout << "num contours: " << contours_poly[i].size() << endl;
-  cout << "center point: " << center[i] << endl;
+  // cout << "area: " << big_area << endl;
+  // cout << "num contours: " << contours_poly[i].size() << endl;
+  // cout << "center point: " << center[i] << endl;
   #endif
 
   // Serialize as stringified JSON

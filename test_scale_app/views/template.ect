@@ -1,0 +1,23 @@
+{{ for set, images of @sets :}}
+
+  <section>
+    <h2>Test set: {{- set }}</h2>
+
+    {{ for img, i in images : }}
+      
+      <subsection>
+        <img id="img_{{-i}}" src="../{{-img.image}}" />
+        <canvas id="canvas_{{-i}}"></canvas>
+        {{-img.measurement.saliency.polygon}}
+        <img src="../{{-img.image}}_saliency.png" />
+        <img src="../{{-img.image}}_threshold.png" />
+        <img src="../{{-img.image}}_filtered.png" />
+        <img src="../{{-img.image}}_contours.png" /><br/>
+        <caption>({{- i}}) Test set: {{- set}}. File path: {{- img.image}}.</caption>
+      </subsection><br /><br />
+
+    {{ end }}
+
+  </section>
+
+{{ end }}

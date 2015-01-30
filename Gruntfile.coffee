@@ -3,7 +3,7 @@ execSync = require('exec-sync')
 
 test_path = './test_set/'
 #test_sets = ['Text', 'NonText']
-test_sets = ['Grid']
+test_sets = ['Grid_full', 'Grid_rescaled']
 
 module.exports = ->
   grunt = @
@@ -36,6 +36,22 @@ module.exports = ->
         cwd: 'test_set_app'
         src: ['**/*.coffee']
         dest: 'test_set_app'
+        ext: '.js'
+      test_scale:
+        options:
+          bare: true
+        expand: true
+        cwd: 'test_scale_app'
+        src: ['**/*.coffee']
+        dest: 'test_scale_app'
+        ext: '.js'
+      root:
+        options:
+          bare: true
+        expand: true
+        cwd: '.'
+        src: ['**.coffee']
+        dest: '.'
         ext: '.js'
 
     # Automated recompilation and testing when developing
@@ -96,18 +112,21 @@ module.exports = ->
       console.log 'Testing set ' + set
       data[set] = []
       dir = test_path + set
-      
+
       imgs = fs.readdirSync dir
       for img in imgs
         unless /filtered|threshold|contours|saliency|DS_Store/.test img
           img = img.replace /\s/g, '\\ '
           abspath = dir + '/' + img
           console.log ' ' + abspath
-          execSync './build/Release/saliency ' + abspath
+          output = execSync 'node measure_image.js ' + abspath
           console.log ' ' + abspath + ' finished.'
-          data[set].push abspath
+          console.log output
+          data[set].push
+            image: abspath
+            measurement: JSON.parse output
 
-    grunt.file.write './test_set_app/data.js', 'window.DATA = {sets:' + JSON.stringify(data, 1, 1) + '};'
+    grunt.file.write './test_scale_app/data.js', 'window.DATA = {sets:' + JSON.stringify(data, 1, 1) + '};'
 
   @registerTask 'test', 'Build and run automated tests', () =>
     @task.run 'gyp'

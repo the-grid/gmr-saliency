@@ -10,8 +10,8 @@
             "process": "gmr-saliency/ResizeDimensions_tu4c3",
             "port": "width",
             "metadata": {
-                "x": 144,
-                "y": 72,
+                "x": 36,
+                "y": 36,
                 "width": 72,
                 "height": 72
             }
@@ -20,8 +20,8 @@
             "process": "gmr-saliency/ResizeDimensions_tu4c3",
             "port": "height",
             "metadata": {
-                "x": 144,
-                "y": 180,
+                "x": 36,
+                "y": 144,
                 "width": 72,
                 "height": 72
             }
@@ -30,18 +30,8 @@
             "process": "canvas/ResizeCanvas_6gnab",
             "port": "in",
             "metadata": {
-                "x": 144,
-                "y": 288,
-                "width": 72,
-                "height": 72
-            }
-        },
-        "filename": {
-            "process": "canvas/SavePNG_gfn62",
-            "port": "filename",
-            "metadata": {
-                "x": 144,
-                "y": 396,
+                "x": 36,
+                "y": 252,
                 "width": 72,
                 "height": 72
             }
@@ -52,8 +42,8 @@
             "process": "gmr-saliency/GetSaliency_kt1ts",
             "port": "error",
             "metadata": {
-                "x": 1008,
-                "y": 180,
+                "x": 684,
+                "y": 216,
                 "width": 72,
                 "height": 72
             }
@@ -62,8 +52,8 @@
             "process": "gmr-saliency/GetSaliency_kt1ts",
             "port": "out",
             "metadata": {
-                "x": 1008,
-                "y": -36,
+                "x": 684,
+                "y": 72,
                 "width": 72,
                 "height": 72
             }
@@ -75,8 +65,8 @@
             "component": "canvas/ResizeCanvas",
             "metadata": {
                 "label": "canvas/ResizeCanvas",
-                "x": 612,
-                "y": 144,
+                "x": 288,
+                "y": 36,
                 "width": 72,
                 "height": 72
             }
@@ -85,8 +75,8 @@
             "component": "gmr-saliency/ResizeDimensions",
             "metadata": {
                 "label": "gmr-saliency/ResizeDimensions",
-                "x": 360,
-                "y": 108,
+                "x": 144,
+                "y": 36,
                 "width": 72,
                 "height": 72
             }
@@ -95,18 +85,8 @@
             "component": "gmr-saliency/GetSaliency",
             "metadata": {
                 "label": "gmr-saliency/GetSaliency",
-                "x": 828,
-                "y": 144,
-                "width": 72,
-                "height": 72
-            }
-        },
-        "canvas/SavePNG_gfn62": {
-            "component": "canvas/SavePNG",
-            "metadata": {
-                "label": "canvas/SavePNG",
-                "x": 1008,
-                "y": 72,
+                "x": 432,
+                "y": 36,
                 "width": 72,
                 "height": 72
             }
@@ -115,8 +95,8 @@
             "component": "core/Output",
             "metadata": {
                 "label": "core/Output",
-                "x": 1008,
-                "y": 288,
+                "x": 540,
+                "y": 216,
                 "width": 72,
                 "height": 72
             }
@@ -152,17 +132,6 @@
             },
             "tgt": {
                 "process": "gmr-saliency/GetSaliency_kt1ts",
-                "port": "canvas"
-            },
-            "metadata": {}
-        },
-        {
-            "src": {
-                "process": "gmr-saliency/GetSaliency_kt1ts",
-                "port": "out"
-            },
-            "tgt": {
-                "process": "canvas/SavePNG_gfn62",
                 "port": "canvas"
             },
             "metadata": {}

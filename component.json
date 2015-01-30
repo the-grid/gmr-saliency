@@ -20,14 +20,16 @@
   "scripts": [
     "spec/testutils.coffee",
     "index.js",
-    "components/GetSaliency.coffee"
+    "components/GetSaliency.coffee",
+    "components/ResizeDimensions.coffee"
   ],
   "json": [
     "component.json"
   ],
   "noflo": {
     "components": {
-      "GetSaliency": "components/GetSaliency.coffee"
+      "GetSaliency": "components/GetSaliency.coffee",
+      "ResizeDimensions": "components/ResizeDimensions.coffee"
     }
   }
 }

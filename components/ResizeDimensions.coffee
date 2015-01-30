@@ -1,25 +1,28 @@
 noflo = require 'noflo'
 
-width = null
-height = null
-
-compute = (c) ->
-  return unless width and height
-  c.outPorts.width.send width/2
-  c.outPorts.height.send height/2
-
 exports.getComponent = ->
   c = new noflo.Component
 
-  c.inPorts.add 'width', (event, payload) ->
-    return unless event is 'data'
-    width = payload
-    compute(c)
-  c.inPorts.add 'height', (event, payload) ->
-    return unless event is 'data'
-    height = payload
-    compute(c)
+  c.inPorts.add 'width',
+    datatype: 'object'
+    required: true
+    requiredForOutput: true
 
-  c.outPorts.add 'width'
-  c.outPorts.add 'height'
+  c.inPorts.add 'height',
+    datatype: 'object'
+    required: true
+    requiredForOutput: true
+
+  c.outPorts.add 'width',
+    datatype: 'object'
+  c.outPorts.add 'height',
+    datatype: 'object'
+
+  noflo.helpers.WirePattern c,
+    in: ['width', 'height']
+    out: ['width', 'height']
+    forwardGroups: true
+  , (payload, groups, out, callback) ->
+    out.width.send payload.width / 2
+    out.height.send payload.height / 2
   c
