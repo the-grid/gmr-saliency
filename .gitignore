@@ -10,3 +10,4 @@ node_modules/
 /spec/*.js
 /spec/*.xml
 flowhub.json
+tmp/
