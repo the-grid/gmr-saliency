@@ -4,19 +4,21 @@ exports.getComponent = ->
   c = new noflo.Component
 
   c.inPorts.add 'width',
-    datatype: 'object'
+    datatype: 'number'
     required: true
     requiredForOutput: true
 
   c.inPorts.add 'height',
-    datatype: 'object'
+    datatype: 'number'
     required: true
     requiredForOutput: true
 
   c.outPorts.add 'width',
-    datatype: 'object'
+    datatype: 'number'
   c.outPorts.add 'height',
-    datatype: 'object'
+    datatype: 'number'
+  c.outPorts.add 'factor',
+    datatype: 'number'
 
   noflo.helpers.WirePattern c,
     in: ['width', 'height']

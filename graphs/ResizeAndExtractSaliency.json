@@ -1,6 +1,7 @@
 {
     "properties": {
         "name": "ResizeAndExtractSaliency",
+        "project": "gmr-saliency",
         "environment": {
             "type": "noflo-nodejs"
         }
@@ -10,7 +11,7 @@
             "process": "gmr-saliency/ResizeDimensions_tu4c3",
             "port": "width",
             "metadata": {
-                "x": 36,
+                "x": -180,
                 "y": 36,
                 "width": 72,
                 "height": 72
@@ -20,17 +21,17 @@
             "process": "gmr-saliency/ResizeDimensions_tu4c3",
             "port": "height",
             "metadata": {
-                "x": 36,
+                "x": -180,
                 "y": 144,
                 "width": 72,
                 "height": 72
             }
         },
-        "in": {
-            "process": "canvas/ResizeCanvas_6gnab",
-            "port": "in",
+        "input": {
+            "process": "imgflo/passthrough_oe6i2",
+            "port": "input",
             "metadata": {
-                "x": 36,
+                "x": -180,
                 "y": 252,
                 "width": 72,
                 "height": 72
@@ -42,8 +43,8 @@
             "process": "gmr-saliency/GetSaliency_kt1ts",
             "port": "error",
             "metadata": {
-                "x": 684,
-                "y": 216,
+                "x": 756,
+                "y": 144,
                 "width": 72,
                 "height": 72
             }
@@ -52,8 +53,8 @@
             "process": "gmr-saliency/GetSaliency_kt1ts",
             "port": "out",
             "metadata": {
-                "x": 684,
-                "y": 72,
+                "x": 756,
+                "y": 36,
                 "width": 72,
                 "height": 72
             }
@@ -61,21 +62,11 @@
     },
     "groups": [],
     "processes": {
-        "canvas/ResizeCanvas_6gnab": {
-            "component": "canvas/ResizeCanvas",
-            "metadata": {
-                "label": "canvas/ResizeCanvas",
-                "x": 288,
-                "y": 36,
-                "width": 72,
-                "height": 72
-            }
-        },
         "gmr-saliency/ResizeDimensions_tu4c3": {
             "component": "gmr-saliency/ResizeDimensions",
             "metadata": {
                 "label": "gmr-saliency/ResizeDimensions",
-                "x": 144,
+                "x": 0,
                 "y": 36,
                 "width": 72,
                 "height": 72
@@ -85,7 +76,7 @@
             "component": "gmr-saliency/GetSaliency",
             "metadata": {
                 "label": "gmr-saliency/GetSaliency",
-                "x": 432,
+                "x": 612,
                 "y": 36,
                 "width": 72,
                 "height": 72
@@ -95,47 +86,34 @@
             "component": "core/Output",
             "metadata": {
                 "label": "core/Output",
-                "x": 540,
-                "y": 216,
+                "x": 612,
+                "y": 144,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "image/UrlToCanvas_k7emx": {
+            "component": "image/UrlToCanvas",
+            "metadata": {
+                "label": "image/UrlToCanvas",
+                "x": 432,
+                "y": 36,
+                "width": 72,
+                "height": 72
+            }
+        },
+        "imgflo/passthrough_oe6i2": {
+            "component": "imgflo/passthrough",
+            "metadata": {
+                "label": "imgflo/passthrough",
+                "x": 252,
+                "y": 36,
                 "width": 72,
                 "height": 72
             }
         }
     },
     "connections": [
-        {
-            "src": {
-                "process": "gmr-saliency/ResizeDimensions_tu4c3",
-                "port": "width"
-            },
-            "tgt": {
-                "process": "canvas/ResizeCanvas_6gnab",
-                "port": "width"
-            },
-            "metadata": {}
-        },
-        {
-            "src": {
-                "process": "gmr-saliency/ResizeDimensions_tu4c3",
-                "port": "height"
-            },
-            "tgt": {
-                "process": "canvas/ResizeCanvas_6gnab",
-                "port": "height"
-            },
-            "metadata": {}
-        },
-        {
-            "src": {
-                "process": "canvas/ResizeCanvas_6gnab",
-                "port": "out"
-            },
-            "tgt": {
-                "process": "gmr-saliency/GetSaliency_kt1ts",
-                "port": "canvas"
-            },
-            "metadata": {}
-        },
         {
             "src": {
                 "process": "gmr-saliency/GetSaliency_kt1ts",
@@ -146,6 +124,61 @@
                 "port": "in"
             },
             "metadata": {}
+        },
+        {
+            "src": {
+                "process": "imgflo/passthrough_oe6i2",
+                "port": "output"
+            },
+            "tgt": {
+                "process": "image/UrlToCanvas_k7emx",
+                "port": "url"
+            },
+            "metadata": {}
+        },
+        {
+            "src": {
+                "process": "gmr-saliency/ResizeDimensions_tu4c3",
+                "port": "width"
+            },
+            "tgt": {
+                "process": "imgflo/passthrough_oe6i2",
+                "port": "width"
+            },
+            "metadata": {
+                "route": null
+            }
+        },
+        {
+            "src": {
+                "process": "gmr-saliency/ResizeDimensions_tu4c3",
+                "port": "height"
+            },
+            "tgt": {
+                "process": "imgflo/passthrough_oe6i2",
+                "port": "height"
+            },
+            "metadata": {
+                "route": null
+            }
+        },
+        {
+            "src": {
+                "process": "image/UrlToCanvas_k7emx",
+                "port": "canvas"
+            },
+            "tgt": {
+                "process": "gmr-saliency/GetSaliency_kt1ts",
+                "port": "canvas"
+            },
+            "metadata": {}
+        },
+        {
+            "data": "anonymous",
+            "tgt": {
+                "process": "image/UrlToCanvas_k7emx",
+                "port": "crossorigin"
+            }
         }
     ]
 }

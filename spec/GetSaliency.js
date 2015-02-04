@@ -79,6 +79,8 @@ describe('GetSaliency component', function() {
         chai.expect(groups).to.eql([2]);
         chai.expect(res).to.be.an('object');
         saliency = res.saliency;
+        console.log('calculated', saliency);
+        console.log('expected', [[77, 74], [93, 107], [93, 147], [84, 150], [77, 166], [84, 179], [84, 198], [116, 198], [116, 179], [124, 172], [124, 160], [116, 145], [108, 142], [108, 93], [112, 92], [102, 92]]);
         chai.expect(saliency.polygon).to.be.eql([[77, 74], [93, 107], [93, 147], [84, 150], [77, 166], [84, 179], [84, 198], [116, 198], [116, 179], [124, 172], [124, 160], [116, 145], [108, 142], [108, 93], [112, 92], [102, 92]]);
         chai.expect(saliency.center).to.be.eql([96, 136]);
         chai.expect(Math.round(saliency.radius)).to.be.equal(67);
