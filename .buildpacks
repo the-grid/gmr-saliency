@@ -1,4 +1,3 @@
-https://github.com/automata/heroku-buildpack-vips.git
 https://github.com/automata/heroku-buildpack-opencv.git
 https://github.com/mojodna/heroku-buildpack-cairo.git
 https://github.com/heroku/heroku-buildpack-nodejs.git
