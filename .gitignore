@@ -2,8 +2,9 @@ build
 .lock-wscript
 .DS_Store
 *.o
-*.png
 test_set/
+test_set_app/
+test_scale_app/
 node_modules/
 /browser/
 /components/*/
