@@ -46,8 +46,11 @@ describe 'GetSaliency component', ->
         chai.expect(groups).to.eql [1]
         chai.expect(res).to.be.an 'object'
         saliency = res.saliency
-        expected = [[510, 1], [494, 1], [494, 21], [456, 59], [418, 111], [396, 111], [374, 128], [333, 128], [318, 102], [294, 75], [256, 52], [231, 45], [209, 46], [196, 52], [193, 57], [217, 63], [221, 68], [221, 109], [189, 139], [191, 206], [180, 208], [178, 222], [167, 225], [161, 238], [131, 247], [130, 261], [108, 261], [108, 267], [92, 277], [92, 289], [79, 294], [79, 302], [69, 307], [63, 324], [60, 358], [65, 469], [61, 510], [173, 510], [174, 484], [215, 484], [221, 479], [221, 461], [233, 460], [241, 441], [243, 418], [252, 415], [302, 414], [304, 407], [344, 407], [360, 431], [367, 455], [370, 433], [377, 431], [380, 410], [375, 409], [375, 351], [381, 348], [419, 218], [451, 150], [481, 107], [481, 77], [484, 73], [510,73]]
-        validateWithThreshold chai, saliency.polygon, expected, 15
+        outmost_rect = saliency.outmost_rect
+        regions = saliency.regions
+
+        expected = [[510,1],[456,59],[417,109],[396,111],[367,133],[352,138],[341,135],[331,125],[318,102],[294,75],[266,57],[231,45],[209,46],[196,52],[193,57],[217,65],[230,83],[226,103],[189,139],[189,165],[198,180],[197,191],[158,237],[135,244],[120,260],[108,261],[69,307],[63,324],[65,349],[60,358],[65,367],[66,466],[61,510],[172,510],[173,495],[183,483],[199,479],[215,484],[221,479],[224,468],[234,458],[242,428],[251,417],[302,414],[305,406],[317,397],[334,399],[351,415],[367,455],[380,410],[374,400],[375,358],[410,243],[447,158],[481,107],[484,82],[493,74],[510,72]]
+        validateWithThreshold chai, regions[0].polygon, expected, 15
         # chai.expect(saliency.center).to.be.eql [285, 255]
         # chai.expect(Math.round(saliency.radius)).to.be.equal 350
         # chai.expect(saliency.bounding_rect).to.be.eql [[60, 1], [511, 511]]
@@ -71,8 +74,10 @@ describe 'GetSaliency component', ->
         chai.expect(groups).to.eql [2]
         chai.expect(res).to.be.an 'object'
         saliency = res.saliency
-        expected = [[77, 74], [93, 107], [93, 147], [84, 150], [77, 166], [84, 179], [84, 198], [116, 198], [116, 179], [124, 172], [124, 160], [116, 145], [108, 142], [108, 93], [112, 92], [102, 92]]
-        validateWithThreshold chai, saliency.polygon, expected, 15
+        outmost_rect = saliency.outmost_rect
+        regions = saliency.regions
+        expected = [[77,74],[83,92],[103,123],[100,139],[84,150],[77,166],[95,198],[103,198],[106,188],[124,172],[124,160],[107,132],[107,101],[112,92],[98,89]]
+        validateWithThreshold chai, regions[0].polygon, expected, 15
         # chai.expect(saliency.center).to.be.eql [96, 136]
         # chai.expect(Math.round(saliency.radius)).to.be.equal 67
         # chai.expect(saliency.bounding_rect).to.be.eql [[77, 74], [125, 199]]
@@ -82,4 +87,21 @@ describe 'GetSaliency component', ->
       testutils.getCanvasWithImageNoShift inSrc, (image) ->
         inImage.beginGroup id
         inImage.send image
+        inImage.endGroup()
+
+  describe 'when passed a big image', ->
+    input = 'alan-kay.png'
+
+    it 'should extract the salient region in a reasonable time', (done) ->
+      @timeout 10000
+      if console.timeEnd
+        console.time 'big image'
+      out.once "data", (res) ->
+        if console.timeEnd
+          console.timeEnd 'big image'
+        chai.expect(res).to.be.an 'object'
+        done()
+      testutils.getCanvasWithImageNoShift input, (canvas) ->
+        inImage.beginGroup 3
+        inImage.send canvas
         inImage.endGroup()
