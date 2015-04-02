@@ -117,16 +117,16 @@ int main(int argc, char *argv[]) {
   }
 
   // Find the biggest area of all contours
-  int big_id = 0;
-  double big_area = 0;
-  for (size_t i = 0, max = contours.size(); i < max; ++i) { 
-  	// Contour area
-  	double area = contourArea(contours[i]);
-  	if (area > big_area) {
-  		big_id = i;
-  		big_area = area;
-  	}
-  }
+  // int big_id = 0;
+  // double big_area = 0;
+  // for (size_t i = 0, max = contours.size(); i < max; ++i) { 
+  // 	// Contour area
+  // 	double area = contourArea(contours[i]);
+  // 	if (area > big_area) {
+  // 		big_id = i;
+  // 		big_area = area;
+  // 	}
+  // }
 
   // Group all bounding rects into one, good for superimposition elimination
   // Vector<Rect> allRect = boundRect;
@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
   // cout << boundRect.size() << endl;
 
   // Group bounding rects into one
-  int xmin, xmax, ymin, ymax;
+  float xmin, xmax, ymin, ymax;
   xmax = 0;
   ymax = 0;
   xmin = INFINITY;
