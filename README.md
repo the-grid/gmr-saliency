@@ -13,9 +13,27 @@ SLIC implementation by Vilson Vieira <vilson@void.cc>.
 The code is tested on  MacOS X 10.9.5 with GNU C++ Compiler, using OpenCV 2.4.9.
 **************************************************************************
 
-Using 
+Depencencies
 ===
 
+- OpenCV
+
+Using
+===
+
+In a NodeJS environment:
+
 ```
+npm install
 grunt
+./build/Release foo.png
 ```
+
+With common C++ compiler:
+
+```
+make
+./gmr-saliency foo.png
+```
+
+
