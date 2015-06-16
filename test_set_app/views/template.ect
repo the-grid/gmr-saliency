@@ -4,16 +4,17 @@
     <h2>Test set: {{- set }}</h2>
 
     {{ for img, i in images : }}
-      
+      {{ if img.measurement.saliency.confidence < 0.50 : }}
       <subsection>
-        <img src="../{{-img}}" />
-        <img src="../{{-img}}_saliency.png" />
-        <img src="../{{-img}}_threshold.png" />
-        <img src="../{{-img}}_filtered.png" />
-        <img src="../{{-img}}_contours.png" /><br/>
-        <caption>({{- i}}) Test set: {{- set}}. File path: {{- img}}.</caption>
+        <img src="../{{-img.image}}" />
+        <img src="../{{-img.image}}_saliency.png" />
+        <img src="../{{-img.image}}_threshold.png" />
+        <img src="../{{-img.image}}_filtered.png" />
+        <img src="../{{-img.image}}_contours.png" />
+        <img src="../{{-img.image}}_histogram_saliency.png" /><br/>
+        <caption>({{- i}}) Confidence: <b>{{- img.measurement.saliency.confidence}}</b>. Test set: {{- set}}. File path: {{- img.image}}.</caption>
       </subsection><br /><br />
-
+      {{ end }}
     {{ end }}
 
   </section>

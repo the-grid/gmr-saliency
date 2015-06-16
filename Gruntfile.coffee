@@ -3,7 +3,7 @@ execSync = require('exec-sync')
 
 test_path = './test_set/'
 #test_sets = ['Text', 'NonText']
-test_sets = ['Grid_full', 'Grid_rescaled']
+test_sets = ['good', 'bad']
 
 module.exports = ->
   grunt = @
@@ -96,13 +96,15 @@ module.exports = ->
 
       imgs = fs.readdirSync dir
       for img in imgs
-        unless /filtered|threshold|contours|saliency|DS_Store/.test img
+        unless /filtered|threshold|contours|saliency|histogram_saliency|DS_Store/.test img
           img = img.replace /\s/g, '\\ '
           abspath = dir + '/' + img
           console.log ' ' + abspath
-          execSync './build/Release/saliency ' + abspath
+          output = execSync './build/Release/saliency ' + abspath
           console.log ' ' + abspath + ' finished.'
-          data[set].push abspath
+          data[set].push
+            image: abspath
+            measurement: JSON.parse output
 
     grunt.file.write './test_set_app/data.js', 'window.DATA = {sets:' + JSON.stringify(data, 1, 1) + '};'
 

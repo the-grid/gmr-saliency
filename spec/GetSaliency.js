@@ -14,13 +14,11 @@ if (!noflo.isBrowser()) {
 }
 
 validateWithThreshold = function(chai, calculated, expected, threshold) {
-  var diffX, diffY, i, _i, _ref, _results;
+  var i, _i, _ref, _results;
   _results = [];
   for (i = _i = 0, _ref = calculated.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-    diffX = Math.abs(calculated[i][0] - expected[i][0]);
-    diffY = Math.abs(calculated[i][1] - expected[i][1]);
-    chai.expect(diffX).to.be.at.most(threshold);
-    _results.push(chai.expect(diffY).to.be.at.most(threshold));
+    chai.expect(calculated[i][0]).to.be.closeTo(expected[i][0], threshold);
+    _results.push(chai.expect(calculated[i][1]).to.be.closeTo(expected[i][1], threshold));
   }
   return _results;
 };
@@ -45,7 +43,9 @@ describe('GetSaliency component', function() {
       return chai.expect(c.outPorts.out).to.be.an('object');
     });
   });
-  return describe('with file system image', function() {
+  describe('with file system image', function() {
+    var previous;
+    previous = null;
     it('should extract a valid saliency profile', function(done) {
       var groups, id, inSrc;
       this.timeout(10000);
@@ -58,12 +58,63 @@ describe('GetSaliency component', function() {
         return groups.pop();
       });
       out.once('data', function(res) {
-        var expected, saliency;
+        var bbox, bounding_rect, center, confidence, expected, polygon, radius, regions, saliency;
         chai.expect(groups).to.eql([1]);
         chai.expect(res).to.be.an('object');
         saliency = res.saliency;
-        expected = [[510, 1], [494, 1], [494, 21], [456, 59], [418, 111], [396, 111], [374, 128], [333, 128], [318, 102], [294, 75], [256, 52], [231, 45], [209, 46], [196, 52], [193, 57], [217, 63], [221, 68], [221, 109], [189, 139], [191, 206], [180, 208], [178, 222], [167, 225], [161, 238], [131, 247], [130, 261], [108, 261], [108, 267], [92, 277], [92, 289], [79, 294], [79, 302], [69, 307], [63, 324], [60, 358], [65, 469], [61, 510], [173, 510], [174, 484], [215, 484], [221, 479], [221, 461], [233, 460], [241, 441], [243, 418], [252, 415], [302, 414], [304, 407], [344, 407], [360, 431], [367, 455], [370, 433], [377, 431], [380, 410], [375, 409], [375, 351], [381, 348], [419, 218], [451, 150], [481, 107], [481, 77], [484, 73], [510, 73]];
-        validateWithThreshold(chai, saliency.polygon, expected, 1.5);
+        previous = saliency;
+        bounding_rect = saliency.bounding_rect, polygon = saliency.polygon, radius = saliency.radius, center = saliency.center, bbox = saliency.bbox, confidence = saliency.confidence, regions = saliency.regions;
+        chai.expect(bounding_rect).to.exists;
+        chai.expect(bounding_rect).to.be.an('array');
+        chai.expect(polygon).to.exists;
+        chai.expect(polygon).to.be.an('array');
+        chai.expect(radius).to.exists;
+        chai.expect(radius).to.be.a('number');
+        chai.expect(center).to.exists;
+        chai.expect(center).to.be.an('array');
+        chai.expect(bbox).to.exists;
+        chai.expect(bbox).to.be.an('object');
+        chai.expect(confidence).to.exists;
+        chai.expect(confidence).to.be.a('number');
+        chai.expect(regions).to.exists;
+        chai.expect(regions).to.be.an('array');
+        chai.expect(regions[0]).to.exists;
+        chai.expect(regions[0]).to.be.an('object');
+        chai.expect(regions[0].bbox).to.exists;
+        chai.expect(regions[0].bbox).to.be.an('object');
+        chai.expect(regions[0].bbox.x).to.be.a('number');
+        chai.expect(regions[0].bbox.y).to.be.a('number');
+        chai.expect(regions[0].bbox.width).to.be.a('number');
+        chai.expect(regions[0].bbox.height).to.be.a('number');
+        chai.expect(regions[0].center).to.exists;
+        chai.expect(regions[0].center).to.be.an('object');
+        chai.expect(regions[0].center.x).to.be.a('number');
+        chai.expect(regions[0].center.y).to.be.a('number');
+        chai.expect(regions[0].radius).to.exists;
+        chai.expect(regions[0].radius).to.be.a('number');
+        chai.expect(regions[0].polygon).to.exists;
+        chai.expect(regions[0].polygon).to.be.an('array');
+        chai.expect(regions[0].polygon[0]).to.exists;
+        chai.expect(regions[0].polygon[0]).to.be.an('object');
+        chai.expect(regions[0].polygon[0].x).to.be.a('number');
+        chai.expect(regions[0].polygon[0].y).to.be.a('number');
+        expected = [[60, 1], [511, 511]];
+        chai.expect(bounding_rect).to.be.deep.equal(expected);
+        chai.expect(polygon).to.be.an('array');
+        chai.expect(polygon.length).to.be.gt(0);
+        chai.expect(radius).to.be.closeTo(350, 2);
+        expected = [285, 255];
+        chai.expect(center).to.be.deep.equal(expected);
+        expected = {
+          x: 60,
+          y: 1,
+          width: 451,
+          height: 510
+        };
+        chai.expect(bbox).to.be.deep.equal(expected);
+        chai.expect(confidence).to.be.lte(0.30);
+        chai.expect(regions).to.be.an('array');
+        chai.expect(regions.length).to.be.gt(0);
         return done();
       });
       inSrc = 'lenna.png';
@@ -73,9 +124,9 @@ describe('GetSaliency component', function() {
         return inImage.endGroup();
       });
     });
-    return it('should extract saliency with two images in a row', function(done) {
+    return it('should extract a different saliency for a different image', function(done) {
       var groups, id, inSrc;
-      this.timeout(10000);
+      this.timeout(20000);
       id = 2;
       groups = [];
       out.once('begingroup', function(group) {
@@ -85,18 +136,39 @@ describe('GetSaliency component', function() {
         return groups.pop();
       });
       out.once('data', function(res) {
-        var expected, saliency;
+        var saliency;
         chai.expect(groups).to.eql([2]);
         chai.expect(res).to.be.an('object');
         saliency = res.saliency;
-        expected = [[77, 74], [93, 107], [93, 147], [84, 150], [77, 166], [84, 179], [84, 198], [116, 198], [116, 179], [124, 172], [124, 160], [116, 145], [108, 142], [108, 93], [112, 92], [102, 92]];
-        validateWithThreshold(chai, saliency.polygon, expected, 1.5);
+        chai.expect(saliency).to.be.not.deep.equal(previous);
         return done();
       });
       inSrc = 'lenin.jpg';
       return testutils.getCanvasWithImageNoShift(inSrc, function(image) {
         inImage.beginGroup(id);
         inImage.send(image);
+        return inImage.endGroup();
+      });
+    });
+  });
+  return describe('when passed a big image', function() {
+    var input;
+    input = 'alan-kay.png';
+    return it('should extract the salient region in a reasonable time', function(done) {
+      this.timeout(10000);
+      if (console.timeEnd) {
+        console.time('big image');
+      }
+      out.once("data", function(res) {
+        if (console.timeEnd) {
+          console.timeEnd('big image');
+        }
+        chai.expect(res).to.be.an('object');
+        return done();
+      });
+      return testutils.getCanvasWithImageNoShift(input, function(canvas) {
+        inImage.beginGroup(3);
+        inImage.send(canvas);
         return inImage.endGroup();
       });
     });

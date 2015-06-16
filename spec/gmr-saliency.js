@@ -31,12 +31,58 @@ describe('Saliency (C++)', function() {
     return chai.expect(obj).to.be.an('object');
   });
   return it('should extract a valid saliency profile', function() {
-    var obj, saliency;
+    var bbox, bounding_rect, center, confidence, expected, obj, polygon, radius, regions, saliency;
     obj = JSON.parse(out);
     saliency = obj.saliency;
-    chai.expect(saliency.polygon).to.be.eql([[510, 1], [494, 1], [494, 21], [456, 59], [418, 111], [396, 111], [374, 128], [333, 128], [318, 102], [294, 75], [256, 52], [231, 45], [209, 46], [196, 52], [193, 57], [217, 63], [221, 68], [221, 109], [189, 139], [191, 206], [180, 208], [178, 222], [167, 225], [161, 238], [131, 247], [130, 261], [108, 261], [108, 267], [92, 277], [92, 289], [79, 294], [79, 302], [69, 307], [63, 324], [60, 358], [65, 469], [61, 510], [173, 510], [174, 484], [215, 484], [221, 479], [221, 461], [233, 460], [241, 441], [243, 418], [252, 415], [302, 414], [304, 407], [344, 407], [360, 431], [367, 455], [370, 433], [377, 431], [380, 410], [375, 409], [375, 351], [381, 348], [419, 218], [451, 150], [481, 107], [481, 77], [484, 73], [510, 73]]);
-    chai.expect(saliency.center).to.be.eql([285, 255]);
-    chai.expect(Math.round(saliency.radius)).to.be.equal(350);
-    return chai.expect(saliency.bounding_rect).to.be.eql([[60, 1], [511, 511]]);
+    bounding_rect = saliency.bounding_rect, polygon = saliency.polygon, radius = saliency.radius, center = saliency.center, bbox = saliency.bbox, confidence = saliency.confidence, regions = saliency.regions;
+    chai.expect(bounding_rect).to.exists;
+    chai.expect(bounding_rect).to.be.an('array');
+    chai.expect(polygon).to.exists;
+    chai.expect(polygon).to.be.an('array');
+    chai.expect(radius).to.exists;
+    chai.expect(radius).to.be.a('number');
+    chai.expect(center).to.exists;
+    chai.expect(center).to.be.an('array');
+    chai.expect(bbox).to.exists;
+    chai.expect(bbox).to.be.an('object');
+    chai.expect(confidence).to.exists;
+    chai.expect(confidence).to.be.a('number');
+    chai.expect(regions).to.exists;
+    chai.expect(regions).to.be.an('array');
+    chai.expect(regions[0]).to.exists;
+    chai.expect(regions[0]).to.be.an('object');
+    chai.expect(regions[0].bbox).to.exists;
+    chai.expect(regions[0].bbox).to.be.an('object');
+    chai.expect(regions[0].bbox.x).to.be.a('number');
+    chai.expect(regions[0].bbox.y).to.be.a('number');
+    chai.expect(regions[0].bbox.width).to.be.a('number');
+    chai.expect(regions[0].bbox.height).to.be.a('number');
+    chai.expect(regions[0].center).to.exists;
+    chai.expect(regions[0].center).to.be.an('object');
+    chai.expect(regions[0].center.x).to.be.a('number');
+    chai.expect(regions[0].center.y).to.be.a('number');
+    chai.expect(regions[0].radius).to.exists;
+    chai.expect(regions[0].radius).to.be.a('number');
+    chai.expect(regions[0].polygon).to.exists;
+    chai.expect(regions[0].polygon).to.be.an('array');
+    chai.expect(regions[0].polygon[0]).to.exists;
+    chai.expect(regions[0].polygon[0]).to.be.an('object');
+    chai.expect(regions[0].polygon[0].x).to.be.a('number');
+    chai.expect(regions[0].polygon[0].y).to.be.a('number');
+    expected = [[60, 1], [511, 511]];
+    chai.expect(bounding_rect).to.be.deep.equal(expected);
+    chai.expect(polygon.length).to.be.gt(0);
+    chai.expect(radius).to.be.closeTo(350, 2);
+    expected = [285, 255];
+    chai.expect(center).to.be.deep.equal(expected);
+    expected = {
+      x: 60,
+      y: 1,
+      width: 451,
+      height: 510
+    };
+    chai.expect(bbox).to.be.deep.equal(expected);
+    chai.expect(confidence).to.be.lte(0.30);
+    return chai.expect(regions.length).to.be.gt(0);
   });
 });

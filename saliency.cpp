@@ -1,5 +1,5 @@
 /* saliency.cpp - Saliency heuristics
- * (c) 2014 The Grid
+ * (c) 2014-2015 The Grid
  *
  */
 
@@ -17,12 +17,30 @@ using namespace std;
 
 RNG rng(12345);
 
+Mat DrawHistogram(Mat gray) {
+  int histSize = 256;    // bin size
+  float range[] = { 0, 255 };
+  const float *ranges[] = { range };
+  MatND hist;
+
+  calcHist( &gray, 1, 0, Mat(), hist, 1, &histSize, ranges, true, false );
+
+  int hist_w = 512; int hist_h = 400;
+  int bin_w = cvRound( (double) hist_w/histSize );
+
+  Mat histImage( hist_h, hist_w, CV_8UC1, Scalar( 0,0,0) );
+  normalize(hist, hist, 0, histImage.rows, NORM_MINMAX, -1, Mat() );
+
+  for( int i = 1; i < histSize; i++){
+    line( histImage, Point( bin_w*(i-1), hist_h - cvRound(hist.at<float>(i-1)) ) ,
+        Point( bin_w*(i), hist_h - cvRound(hist.at<float>(i)) ),
+        Scalar( 255, 0, 0), 2, 8, 0  );
+  }
+  return histImage;
+}
+
 static void display_help(string program_name) {
-  cerr << "Usage: " << program_name << " <original image>"
-       //<< "Options:\n"
-       //<< "\t-h,--help\t\tShow this help message\n"
-       //<< "\t-s,--saliencymap\tWrite the saliency map to an image file\n"
-       << endl;
+  cerr << "Usage: " << program_name << " <original image>" << endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -51,18 +69,32 @@ int main(int argc, char *argv[]) {
 	Mat saliency_gray = saliency_map * 255;
 	Mat most_salient;
 
-  // Static threshold:
-  // Mat fg;
-  // int threshold_value = 254;
-  // fg = saliency_gray >= threshold_value;
-  // #ifdef DEBUG
-  // sprintf(file_path, "%s_fg.png", original_image_path);
-  // imwrite(file_path, fg);
-  // #endif
-	GaussianBlur(saliency_gray, saliency_gray, Size(1,1), 0, 0);
+  #ifdef DEBUG
+  Mat histin = DrawHistogram(saliency_gray);
+  sprintf(file_path, "%s_histogram_saliency.png", original_image_path);
+  imwrite(file_path, histin);
+  #endif
+
+  // Calculate confidence based on homogeneity of saliency map's histogram
+  Mat hist;
+  int histSize = 256;
+  float range[] = { 0, 256 } ;
+  const float* histRange = { range };
+  calcHist(&saliency_gray, 1, 0, Mat(), hist, 1, &histSize, &histRange, true, false);
+  hist /= original_image.size().height*original_image.size().width;
+  Mat logP;
+  cv::log(hist,logP);
+  // Inverse normalized entropy
+  float entropy = -1*sum(hist.mul(logP)).val[0];
+  entropy = entropy/log(256); // normalize
+  entropy = 1.0 - entropy; // inverse
+
+  // Blur and binary threshold saliency map based on OTSU
 	saliency_gray.convertTo(saliency_gray, CV_8U); // threshold needs an int Mat
-  //adaptiveThreshold(saliency_gray, most_salient, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 3, 0);  
-	threshold(saliency_gray, most_salient, 0, 255, THRESH_BINARY | THRESH_OTSU);
+  Mat blur;
+  bilateralFilter(saliency_gray, blur, 12, 24, 6);
+  // GaussianBlur(saliency_gray, blur, Size(5,5), 0);
+  threshold(blur, most_salient, 0, 255, THRESH_BINARY + THRESH_OTSU);
   #ifdef DEBUG
 	sprintf(file_path, "%s_threshold.png", original_image_path);
 	imwrite(file_path, most_salient);
@@ -70,6 +102,7 @@ int main(int argc, char *argv[]) {
 
 	// Eliminate small regions (Mat() == default 3x3 kernel)
 	Mat filtered;
+  //filtered = most_salient;
   // Another option is to use dilate/erode/dilate:
 	// dilate(most_salient, filtered, Mat(), Point(-1, -1), 2, 1, 1);
 	// erode(filtered, filtered, Mat(), Point(-1, -1), 4, 1, 1);
@@ -117,16 +150,16 @@ int main(int argc, char *argv[]) {
   }
 
   // Find the biggest area of all contours
-  // int big_id = 0;
-  // double big_area = 0;
-  // for (size_t i = 0, max = contours.size(); i < max; ++i) { 
-  // 	// Contour area
-  // 	double area = contourArea(contours[i]);
-  // 	if (area > big_area) {
-  // 		big_id = i;
-  // 		big_area = area;
-  // 	}
-  // }
+  int big_id = 0;
+  double big_area = 0;
+  for (size_t i = 0, max = contours.size(); i < max; ++i) { 
+  	// Contour area
+  	double area = contourArea(contours[i]);
+  	if (area > big_area) {
+  		big_id = i;
+  		big_area = area;
+  	}
+  }
 
   // Group all bounding rects into one, good for superimposition elimination
   // Vector<Rect> allRect = boundRect;
@@ -152,14 +185,9 @@ int main(int argc, char *argv[]) {
       xmax = xmaxB;
     if (ymaxB > ymax)
       ymax = ymaxB;
-    // cout << j << endl;
-    // cout << boundRect[j].tl() << endl;
-    // cout << boundRect[j].br() << endl;
   }
-  // cout << xmin << "," << ymin << endl;
-  // cout << xmax << "," << ymax << endl;
   Rect bigRect = Rect(xmin, ymin, xmax-xmin, ymax-ymin);
-  //int i = big_id;
+
   #ifdef DEBUG
   // Draw polygonal contour + bonding rects + circles
   Mat drawing = Mat::zeros( filtered.size(), CV_8UC3 );
@@ -192,23 +220,44 @@ int main(int argc, char *argv[]) {
   #endif
 
   // Serialize as stringified JSON
-  // TODO: Use jsoncpp instead? Not using now to avoid one more dependency
   cout << "{\"saliency\": ";
-  cout <<   "{\"outmost_rect\": ["  << bigRect.tl() << ", " << bigRect.br() << "],";
+  float x = bigRect.tl().x;
+  float y = bigRect.tl().y;
+  float w = abs(x-bigRect.br().x);
+  float h = abs(y-bigRect.br().y);
+
+  cout <<   "{\"bounding_rect\": ["  << bigRect.tl() << ", " << bigRect.br() << "],";
+  cout <<    "\"bbox\": {\"x\": " <<x<< ", \"y\": " <<y<< ", \"width\": " <<w<< ", \"height\": " <<h<< "},";
+  cout <<    "\"confidence\": " << entropy << ",";
+
+  cout <<    "\"polygon\": [";
+  size_t maxPoly = contours_poly[big_id].size()-1;
+  for (size_t j = 0; j < maxPoly; ++j) {
+    cout << contours_poly[big_id][j] << ", ";
+  }
+  cout << contours_poly[big_id][maxPoly] << "], ";
+  cout <<    "\"center\": [" << (int)center[big_id].x << ", " << (int)center[big_id].y << "], ";
+  cout <<    "\"radius\": " << radius[big_id] << ", ";
+  // Regions
   cout <<    "\"regions\": [";
   for (size_t i=0, max=boundRect.size(); i<max; ++i) {
     cout <<     "{\"polygon\": [";
     size_t maxPoly = contours_poly[i].size()-1;
     for (size_t j = 0; j < maxPoly; ++j) {
-      cout << contours_poly[i][j] << ", ";
+      cout << "{\"x\": " << contours_poly[i][j].x << ", \"y\": " << contours_poly[i][j].y << "}, ";
     }
-    cout << contours_poly[i][maxPoly] << "], ";
-    cout <<       "\"center\": [" << (int)center[i].x << ", " << (int)center[i].y << "], ";
+    cout << "{\"x\": " << contours_poly[i][maxPoly].x << ", \"y\": " << contours_poly[i][maxPoly].y << "}], ";
+    cout <<       "\"center\": {\"x\": " << (int)center[i].x << ", \"y\": " << (int)center[i].y << "}, ";
     cout <<       "\"radius\": " << radius[i] << ", ";
-    if (i == max-1)
-      cout <<       "\"bounding_rect\": [" << boundRect[i].tl() << ", " << boundRect[i].br() << "]}";
-    else
-      cout <<       "\"bounding_rect\": [" << boundRect[i].tl() << ", " << boundRect[i].br() << "]},";
+    float x = boundRect[i].tl().x;
+    float y = boundRect[i].tl().y;
+    float w = abs(x-boundRect[i].br().x);
+    float h = abs(y-boundRect[i].br().y);
+    if (i == max-1) {
+      cout <<    "\"bbox\": {\"x\": " <<x<< ", \"y\": " <<y<< ", \"width\": " <<w<< ", \"height\": " <<h<< "}}";
+    } else {
+      cout <<    "\"bbox\": {\"x\": " <<x<< ", \"y\": " <<y<< ", \"width\": " <<w<< ", \"height\": " <<h<< "}},";
+    }
   }
   cout << "]}}" << endl;
 
