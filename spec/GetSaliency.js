@@ -48,7 +48,7 @@ describe('GetSaliency component', function() {
     previous = null;
     it('should extract a valid saliency profile', function(done) {
       var groups, id, inSrc;
-      this.timeout(10000);
+      this.timeout(30000);
       id = 1;
       groups = [];
       out.once('begingroup', function(group) {
@@ -126,7 +126,7 @@ describe('GetSaliency component', function() {
     });
     return it('should extract a different saliency for a different image', function(done) {
       var groups, id, inSrc;
-      this.timeout(20000);
+      this.timeout(30000);
       id = 2;
       groups = [];
       out.once('begingroup', function(group) {
@@ -155,7 +155,7 @@ describe('GetSaliency component', function() {
     var input;
     input = 'alan-kay.png';
     return it('should extract the salient region in a reasonable time', function(done) {
-      this.timeout(10000);
+      this.timeout(30000);
       if (console.timeEnd) {
         console.time('big image');
       }

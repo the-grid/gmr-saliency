@@ -34,7 +34,7 @@ describe 'GetSaliency component', ->
   describe 'with file system image', ->
     previous = null
     it 'should extract a valid saliency profile', (done) ->
-      @timeout 10000
+      @timeout 30000
       id = 1
       groups = []
       out.once 'begingroup', (group) ->
@@ -109,7 +109,7 @@ describe 'GetSaliency component', ->
         inImage.endGroup()
 
     it 'should extract a different saliency for a different image', (done) ->
-      @timeout 20000
+      @timeout 30000
       id = 2
       groups = []
       out.once 'begingroup', (group) ->
@@ -133,7 +133,7 @@ describe 'GetSaliency component', ->
     input = 'alan-kay.png'
 
     it 'should extract the salient region in a reasonable time', (done) ->
-      @timeout 10000
+      @timeout 30000
       if console.timeEnd
         console.time 'big image'
       out.once "data", (res) ->
