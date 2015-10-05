@@ -11,32 +11,39 @@ validateWithThreshold = (chai, calculated, expected, threshold) ->
   for i in [0...calculated.length]
     chai.expect(calculated[i][0]).to.be.closeTo expected[i][0], threshold
     chai.expect(calculated[i][1]).to.be.closeTo expected[i][1], threshold
- 
+
 describe 'GetSaliency component', ->
- 
+
   c = null
   inImage = null
   out = null
+  error = null
 
   before ->
     c = GetSaliency.getComponent()
     inImage = noflo.internalSocket.createSocket()
     out = noflo.internalSocket.createSocket()
+    error = noflo.internalSocket.createSocket()
     c.inPorts.canvas.attach inImage
     c.outPorts.out.attach out
- 
+    c.outPorts.error.attach error
+
   describe 'when instantiated', ->
     it 'should have one input port', ->
       chai.expect(c.inPorts.canvas).to.be.an 'object'
     it 'should have one output port', ->
       chai.expect(c.outPorts.out).to.be.an 'object'
- 
+    it 'should have one error port', ->
+      chai.expect(c.outPorts.error).to.be.an 'object'
+
   describe 'with file system image', ->
     previous = null
     it 'should extract a valid saliency profile', (done) ->
       @timeout 30000
       id = 1
       groups = []
+      error.once 'data', (err) ->
+        console.log 'err', err
       out.once 'begingroup', (group) ->
         groups.push group
       out.once 'endgroup', (group) ->
@@ -112,6 +119,8 @@ describe 'GetSaliency component', ->
       @timeout 30000
       id = 2
       groups = []
+      error.once 'data', (err) ->
+        console.log 'err', err
       out.once 'begingroup', (group) ->
         groups.push group
       out.once 'endgroup', (group) ->
@@ -136,7 +145,9 @@ describe 'GetSaliency component', ->
       @timeout 30000
       if console.timeEnd
         console.time 'big image'
-      out.once "data", (res) ->
+      error.once 'data', (err) ->
+        console.log 'err', err
+      out.once 'data', (res) ->
         if console.timeEnd
           console.timeEnd 'big image'
         chai.expect(res).to.be.an 'object'
