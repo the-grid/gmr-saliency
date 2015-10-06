@@ -53,7 +53,16 @@ int main(int argc, char *argv[]) {
 	strcpy(original_image_path, argv[1]);
 
   Mat original_image;
-  original_image = imread(original_image_path);
+  original_image = imread(original_image_path, CV_LOAD_IMAGE_COLOR);
+
+  // Return null saliency if fails opening the image file
+  if (original_image.empty()) {
+    original_image = imread(original_image_path, CV_LOAD_IMAGE_COLOR);
+    if (original_image.empty()) {
+      cout << "{\"saliency\": null}" << endl;
+      return 0;
+    }
+  }
 
 	GMRsaliency GMRsal;
   Mat saliency_map;
@@ -138,7 +147,7 @@ int main(int argc, char *argv[]) {
   vector<Point2f> center( contours.size() );
   vector<float> radius( contours.size() );
 
-  for (size_t i = 0, max = contours.size(); i < max; ++i) { 
+  for (size_t i = 0, max = contours.size(); i < max; ++i) {
     // Approximate polygon of a contour
   	approxPolyDP( Mat(contours[i]), contours_poly[i], 3, true );
     // Calculate the bounding box for the contour
@@ -152,7 +161,7 @@ int main(int argc, char *argv[]) {
   // Find the biggest area of all contours
   int big_id = 0;
   double big_area = 0;
-  for (size_t i = 0, max = contours.size(); i < max; ++i) { 
+  for (size_t i = 0, max = contours.size(); i < max; ++i) {
   	// Contour area
   	double area = contourArea(contours[i]);
   	if (area > big_area) {
@@ -171,7 +180,7 @@ int main(int argc, char *argv[]) {
   xmax = 0;
   ymax = 0;
   xmin = INFINITY;
-  ymin = INFINITY;  
+  ymin = INFINITY;
   for (size_t j=0, max = boundRect.size(); j<max; ++j) {
     int xminB = boundRect[j].x;
     int yminB = boundRect[j].y;
@@ -192,7 +201,7 @@ int main(int argc, char *argv[]) {
   // Draw polygonal contour + bonding rects + circles
   Mat drawing = Mat::zeros( filtered.size(), CV_8UC3 );
   for (size_t i=0, max=boundRect.size(); i<max; ++i) {
-  
+
   	//Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
   	Scalar color = Scalar(255,255,255);
     //drawContours( drawing, contours_poly, i, color, 2, 8, vector<Vec4i>(), 0, Point() );
@@ -210,7 +219,7 @@ int main(int argc, char *argv[]) {
   }
   // Draw the big rectangle
   rectangle( drawing, bigRect.tl(), bigRect.br(), Scalar(255,200,255), 2, 8, 0 );
-  
+
   sprintf(file_path, "%s_contours.png", original_image_path);
   imwrite(file_path, drawing);
 
