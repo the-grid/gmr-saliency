@@ -48,6 +48,6 @@
     "graphs": {
       "ResizeAndExtractSaliency": "graphs/ResizeAndExtractSaliency.json"
     }
-  }
+  },
   "main": "build/Release/saliency"
 }
