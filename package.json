@@ -26,7 +26,7 @@
     "mocha": "1.21.5"
   },
   "dependencies": {
-    "noflo": "0.5.14",
+    "noflo": "~0.5.21",
     "noflo-canvas": "0.1.17",
     "temporary": "0.0.8",
     "noflo-nodejs": "0.0.6"
