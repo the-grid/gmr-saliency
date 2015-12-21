@@ -1,8 +1,17 @@
 language: node_js
 node_js:
-    - "0.10"
+- '0.12'
 before_install:
-    - sudo apt-get update -qq
-    - sudo apt-get install -qq libopencv-dev libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
+- sudo apt-get update -qq
+- sudo apt-get install -qq libopencv-dev libcairo2-dev libjpeg8-dev libpango1.0-dev
+  libgif-dev build-essential g++
 before_script:
-    - npm install -g grunt-cli node-gyp
+- npm install -g grunt-cli node-gyp
+deploy:
+  provider: npm
+  email: vilson@void.cc
+  api_key:
+    secure: FEg3G/IB7DJVH6YakerkippxYboD1ctaLBdxIwSojKsdqRnySlsmo1bJaV8M+7naxnb7vpIpLZARFMt4dtFVDuIUSbdMo373C8XaWSxr48bjZvzRCZvE0RD/Z5H28tQoFUpCABJV4vIul9Kg3UqHXBgHeeWpyPRffIWMtB0Ubrk=
+  on:
+    tags: true
+    repo: the-grid/gmr-saliency
