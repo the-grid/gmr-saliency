@@ -34,9 +34,6 @@ onEnd = (tmpFile, callback) ->
 
   exec saliencyBin + ' ' + tmpFile.path, (err, stdout, stderr) ->
     tmpFile.unlink()
-    if stderr
-      callback stderr
-      return
     if err
       callback err
       return
