@@ -21,8 +21,10 @@ compute = (canvas, callback) ->
     out.write(chunk)
   stream.on 'end', () ->
     try
-      # Call saliency on the temporary file
-      onEnd tmpFile, callback
+      # Delay a bit to prevent premature end of stream
+      setTimeout () ->
+        onEnd tmpFile, callback
+      , 100
     catch e
       callback e
       tmpFile.unlink()
@@ -32,8 +34,12 @@ onEnd = (tmpFile, callback) ->
 
   exec saliencyBin + ' ' + tmpFile.path, (err, stdout, stderr) ->
     tmpFile.unlink()
+    if stderr
+      callback stderr
+      return
     if err
       callback err
+      return
     else
       # Process the saliency output (parse and send)
       out = JSON.parse stdout
