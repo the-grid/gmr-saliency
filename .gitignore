@@ -8,7 +8,7 @@ test_scale_app/
 node_modules/
 /browser/
 /components/*/
-spec/*.js
-spec/*.xml
+/spec/*.js
+/spec/*.xml
 flowhub.json
 tmp/
