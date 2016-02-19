@@ -7,38 +7,42 @@ exec = require('child_process').exec
 # @runtime noflo-nodejs
 # @name GetSaliency
 
-compute = (canvas, callback) ->
-  # Get canvas
-  ctx = canvas.getContext '2d'
-  imageData = ctx.getImageData 0, 0, canvas.width, canvas.height
-  data = imageData.data
-
-  # Write on a temporary file
+writeCanvasTempFile = (canvas, callback) ->
   tmpFile = new temporary.File
-  out = fs.createWriteStream tmpFile.path
-  stream = canvas.pngStream()
-  stream.on 'data', (chunk) ->
-    out.write(chunk)
-  stream.on 'end', () ->
-    try
-      # Delay a bit to prevent premature end of stream
-      setTimeout () ->
-        onEnd tmpFile, callback
-      , 100
-    catch e
-      callback e
+
+  rs = canvas.pngStream()
+  ws = fs.createWriteStream tmpFile.path
+
+  rs.once 'error', (error) ->
+    callback error
+    tmpFile.unlink()
+    return
+  ws.once 'error', (error) ->
+    callback error
+    tmpFile.unlink()
+    return
+  ws.once 'open', (fd) ->
+    if fd < 0
+      callback new Error 'Bad file descriptor'
       tmpFile.unlink()
+      return
+    ws.once 'close', ->
+      fs.fsync fd, ->
+        try
+          callback null, tmpFile
+        catch error
+          callback error
+          tmpFile.unlink()
+  rs.pipe ws
 
-onEnd = (tmpFile, callback) ->
-  saliencyBin = path.join __dirname, '../build/Release/saliency'
-
-  exec saliencyBin + ' ' + tmpFile.path, (err, stdout, stderr) ->
+runSaliency = (tmpFile, callback) ->
+  bin = path.join __dirname, '../build/Release/saliency'
+  exec "#{bin} #{tmpFile.path}", (err, stdout, stderr) ->
     tmpFile.unlink()
     if err
       callback err
       return
     else
-      # Process the saliency output (parse and send)
       out = JSON.parse stdout
       callback null, out
 
@@ -59,9 +63,11 @@ exports.getComponent = ->
     out: 'out'
     forwardGroups: true
     async: true
-  , (payload, groups, out, callback) ->
-    compute payload, (err, val) ->
+  , (canvas, groups, out, callback) ->
+    writeCanvasTempFile canvas, (err, tmpFile) ->
       return callback err if err
-      out.send val
-      do callback
+      runSaliency tmpFile, (err, val) ->
+        return callback err if err
+        out.send val
+        do callback
   c
