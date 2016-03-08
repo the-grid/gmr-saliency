@@ -13,6 +13,8 @@
 // #define DEBUG
 #undef DEBUG
 
+#define MINSIZE 50
+
 using namespace std;
 
 RNG rng(12345);
@@ -39,6 +41,58 @@ Mat DrawHistogram(Mat gray) {
   return histImage;
 }
 
+string jsonify(Rect &bigRect,
+    int big_id,
+    vector<Rect> &boundRect,
+    vector<vector<Point> > &contours_poly,
+    vector<Point2f> &center,
+    vector<float> &radius,
+    float entropy) {
+  ostringstream out;
+
+  out << "{\"saliency\": ";
+  float x = bigRect.tl().x;
+  float y = bigRect.tl().y;
+  float w = abs(x-bigRect.br().x);
+  float h = abs(y-bigRect.br().y);
+
+  out <<   "{\"bounding_rect\": ["  << bigRect.tl() << ", " << bigRect.br() << "],";
+  out <<    "\"bbox\": {\"x\": " <<x<< ", \"y\": " <<y<< ", \"width\": " <<w<< ", \"height\": " <<h<< "},";
+  out <<    "\"confidence\": " << entropy << ",";
+
+  out <<    "\"polygon\": [";
+  size_t maxPoly = contours_poly[big_id].size()-1;
+  for (size_t j = 0; j < maxPoly; ++j) {
+    out << contours_poly[big_id][j] << ", ";
+  }
+  out << contours_poly[big_id][maxPoly] << "], ";
+  out <<    "\"center\": [" << (int)center[big_id].x << ", " << (int)center[big_id].y << "], ";
+  out <<    "\"radius\": " << radius[big_id] << ", ";
+  // Regions
+  out <<    "\"regions\": [";
+  for (size_t i=0, max=boundRect.size(); i<max; ++i) {
+    out <<     "{\"polygon\": [";
+    size_t maxPoly = contours_poly[i].size()-1;
+    for (size_t j = 0; j < maxPoly; ++j) {
+      out << "{\"x\": " << contours_poly[i][j].x << ", \"y\": " << contours_poly[i][j].y << "}, ";
+    }
+    out << "{\"x\": " << contours_poly[i][maxPoly].x << ", \"y\": " << contours_poly[i][maxPoly].y << "}], ";
+    out <<       "\"center\": {\"x\": " << (int)center[i].x << ", \"y\": " << (int)center[i].y << "}, ";
+    out <<       "\"radius\": " << radius[i] << ", ";
+    float x = boundRect[i].tl().x;
+    float y = boundRect[i].tl().y;
+    float w = abs(x-boundRect[i].br().x);
+    float h = abs(y-boundRect[i].br().y);
+    if (i == max-1) {
+      out <<    "\"bbox\": {\"x\": " <<x<< ", \"y\": " <<y<< ", \"width\": " <<w<< ", \"height\": " <<h<< "}}";
+    } else {
+      out <<    "\"bbox\": {\"x\": " <<x<< ", \"y\": " <<y<< ", \"width\": " <<w<< ", \"height\": " <<h<< "}},";
+    }
+  }
+  out << "]}}" << endl;
+  return out.str();
+}
+
 static void display_help(string program_name) {
   cerr << "Usage: " << program_name << " <original image>" << endl;
 }
@@ -54,7 +108,6 @@ int main(int argc, char *argv[]) {
 
   Mat original_image;
   original_image = imread(original_image_path, CV_LOAD_IMAGE_COLOR);
-
   // Return null saliency if fails opening the image file
   if (original_image.empty()) {
     original_image = imread(original_image_path, CV_LOAD_IMAGE_COLOR);
@@ -63,11 +116,38 @@ int main(int argc, char *argv[]) {
       return 0;
     }
   }
+  // Return whole image as saliency for images with dimensions less than minSize
+  if (original_image.rows < MINSIZE || original_image.cols < MINSIZE) {
+    int w = original_image.cols;
+    int h = original_image.rows;
+    int big_id = 0;
 
+    Rect bigRect = Rect(0, 0, w, h);
+    vector<Rect> boundRect;
+    boundRect.push_back(bigRect);
+
+    vector<Point> points;
+    points.push_back(Point(0,0));
+    points.push_back(Point(0,h));
+
+    vector<vector<Point> > contours_poly;
+    contours_poly.push_back(points);
+
+    vector<Point2f> center;
+    center.push_back(Point2f(w/2, h/2));
+
+    vector<float> radius;
+    radius.push_back(w);
+
+    float entropy = 1.0;
+
+    string json = jsonify(bigRect, big_id, boundRect, contours_poly, center, radius, entropy);
+    cout << json;
+    return 0;
+  }
 	GMRsaliency GMRsal;
   Mat saliency_map;
 	saliency_map = GMRsal.GetSal(original_image);
-
   #ifdef DEBUG
 	char file_path[256];
 	sprintf(file_path, "%s_saliency.png", original_image_path);
@@ -229,46 +309,8 @@ int main(int argc, char *argv[]) {
   #endif
 
   // Serialize as stringified JSON
-  cout << "{\"saliency\": ";
-  float x = bigRect.tl().x;
-  float y = bigRect.tl().y;
-  float w = abs(x-bigRect.br().x);
-  float h = abs(y-bigRect.br().y);
-
-  cout <<   "{\"bounding_rect\": ["  << bigRect.tl() << ", " << bigRect.br() << "],";
-  cout <<    "\"bbox\": {\"x\": " <<x<< ", \"y\": " <<y<< ", \"width\": " <<w<< ", \"height\": " <<h<< "},";
-  cout <<    "\"confidence\": " << entropy << ",";
-
-  cout <<    "\"polygon\": [";
-  size_t maxPoly = contours_poly[big_id].size()-1;
-  for (size_t j = 0; j < maxPoly; ++j) {
-    cout << contours_poly[big_id][j] << ", ";
-  }
-  cout << contours_poly[big_id][maxPoly] << "], ";
-  cout <<    "\"center\": [" << (int)center[big_id].x << ", " << (int)center[big_id].y << "], ";
-  cout <<    "\"radius\": " << radius[big_id] << ", ";
-  // Regions
-  cout <<    "\"regions\": [";
-  for (size_t i=0, max=boundRect.size(); i<max; ++i) {
-    cout <<     "{\"polygon\": [";
-    size_t maxPoly = contours_poly[i].size()-1;
-    for (size_t j = 0; j < maxPoly; ++j) {
-      cout << "{\"x\": " << contours_poly[i][j].x << ", \"y\": " << contours_poly[i][j].y << "}, ";
-    }
-    cout << "{\"x\": " << contours_poly[i][maxPoly].x << ", \"y\": " << contours_poly[i][maxPoly].y << "}], ";
-    cout <<       "\"center\": {\"x\": " << (int)center[i].x << ", \"y\": " << (int)center[i].y << "}, ";
-    cout <<       "\"radius\": " << radius[i] << ", ";
-    float x = boundRect[i].tl().x;
-    float y = boundRect[i].tl().y;
-    float w = abs(x-boundRect[i].br().x);
-    float h = abs(y-boundRect[i].br().y);
-    if (i == max-1) {
-      cout <<    "\"bbox\": {\"x\": " <<x<< ", \"y\": " <<y<< ", \"width\": " <<w<< ", \"height\": " <<h<< "}}";
-    } else {
-      cout <<    "\"bbox\": {\"x\": " <<x<< ", \"y\": " <<y<< ", \"width\": " <<w<< ", \"height\": " <<h<< "}},";
-    }
-  }
-  cout << "]}}" << endl;
+  string json = jsonify(bigRect, big_id, boundRect, contours_poly, center, radius, entropy);
+  cout << json;
 
 	return 0;
 }
