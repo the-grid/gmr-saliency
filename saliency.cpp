@@ -129,6 +129,8 @@ int main(int argc, char *argv[]) {
     vector<Point> points;
     points.push_back(Point(0,0));
     points.push_back(Point(0,h));
+    points.push_back(Point(w,h));
+    points.push_back(Point(w,0));
 
     vector<vector<Point> > contours_poly;
     contours_poly.push_back(points);
