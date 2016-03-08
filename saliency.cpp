@@ -139,9 +139,12 @@ int main(int argc, char *argv[]) {
     center.push_back(Point2f(w/2, h/2));
 
     vector<float> radius;
-    radius.push_back(w);
+    if (w >= h)
+      radius.push_back(w);
+    else
+      radius.push_back(h);
 
-    float entropy = 1.0;
+    float entropy = 0.0;
 
     string json = jsonify(bigRect, big_id, boundRect, contours_poly, center, radius, entropy);
     cout << json;
