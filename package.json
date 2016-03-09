@@ -1,7 +1,7 @@
 {
   "name": "gmr-saliency",
   "description": "GMR Saliency Map",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "author": {
     "name": "Vilson Vieira",
     "email": "vilson@void.cc"
