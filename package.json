@@ -28,8 +28,7 @@
   "dependencies": {
     "noflo": "~0.5.21",
     "noflo-canvas": "0.1.17",
-    "temporary": "0.0.8",
-    "noflo-nodejs": "0.0.6"
+    "temporary": "~0.0.8"
   },
   "keywords": [
     "saliency",
