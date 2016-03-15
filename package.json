@@ -15,16 +15,16 @@
     "chai": "^3.5.0",
     "coffeelint": "^1.12.1",
     "grunt": "^0.4.5",
-    "grunt-cafe-mocha": "^0.1.13",
     "grunt-cli": "^0.1.13",
     "grunt-coffeelint": "^0.0.15",
     "grunt-contrib-coffee": "^1.0.0",
     "grunt-contrib-symlink": "^0.3.0",
     "grunt-contrib-watch": "^1.0.0",
+    "grunt-mocha-test": "^0.12.7",
     "grunt-node-gyp": "^0.5.0",
     "grunt-noflo-manifest": "^0.1.11",
-    "noflo-canvas": "^0.2.0",
-    "mocha": "^2.4.4"
+    "mocha": "^2.4.4",
+    "noflo-canvas": "^0.2.0"
   },
   "dependencies": {
     "noflo": "~0.5.21",
