@@ -50,6 +50,11 @@ string jsonify(Rect &bigRect,
     float entropy) {
   ostringstream out;
 
+  if (contours_poly.size() <= 0) {
+    out << "{\"saliency\": null}" << endl;
+    return out.str();
+  }
+
   out << "{\"saliency\": ";
   float x = bigRect.tl().x;
   float y = bigRect.tl().y;
@@ -266,22 +271,28 @@ int main(int argc, char *argv[]) {
   ymax = 0;
   xmin = INFINITY;
   ymin = INFINITY;
-  for (size_t j=0, max = boundRect.size(); j<max; ++j) {
-    int xminB = boundRect[j].x;
-    int yminB = boundRect[j].y;
-    int xmaxB = boundRect[j].x + boundRect[j].width;
-    int ymaxB = boundRect[j].y + boundRect[j].height;
-    if (xminB < xmin)
-      xmin = xminB;
-    if (yminB < ymin)
-      ymin = yminB;
-    if (xmaxB > xmax)
-      xmax = xmaxB;
-    if (ymaxB > ymax)
-      ymax = ymaxB;
+  if (boundRect.size() > 0) {
+    for (size_t j=0, max = boundRect.size(); j<max; ++j) {
+      int xminB = boundRect[j].x;
+      int yminB = boundRect[j].y;
+      int xmaxB = boundRect[j].x + boundRect[j].width;
+      int ymaxB = boundRect[j].y + boundRect[j].height;
+      if (xminB < xmin)
+        xmin = xminB;
+      if (yminB < ymin)
+        ymin = yminB;
+      if (xmaxB > xmax)
+        xmax = xmaxB;
+      if (ymaxB > ymax)
+        ymax = ymaxB;
+    }
+  } else {
+    xmin = 0;
+    ymin = 0;
+    xmax = 0;
+    ymax = 0;
   }
   Rect bigRect = Rect(xmin, ymin, xmax-xmin, ymax-ymin);
-
   #ifdef DEBUG
   // Draw polygonal contour + bonding rects + circles
   Mat drawing = Mat::zeros( filtered.size(), CV_8UC3 );
