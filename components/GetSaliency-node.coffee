@@ -40,6 +40,7 @@ runSaliency = (tmpFile, callback) ->
   exec "#{bin} #{tmpFile.path}", (err, stdout, stderr) ->
     tmpFile.unlink()
     if err
+      console.log 'GetSaliency ERROR:', err
       callback err
       return
     else
