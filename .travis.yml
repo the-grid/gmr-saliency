@@ -21,7 +21,7 @@ env:
 before_install:
   - npm cache clean
 before_script:
-  - npm install -g grunt-cli
+  - npm install -g grunt-cli node-gyp
 deploy:
   provider: npm
   email: vilson@void.cc
