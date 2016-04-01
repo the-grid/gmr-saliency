@@ -18,8 +18,10 @@ addons:
 env:
   matrix:
     - CXX=g++-4.8
+before_install:
+  - npm cache clean
 before_script:
-- npm install -g grunt-cli
+  - npm install -g grunt-cli
 deploy:
   provider: npm
   email: vilson@void.cc
