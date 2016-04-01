@@ -66,7 +66,14 @@ exports.getComponent = ->
     async: true
   , (canvas, groups, out, callback) ->
     writeCanvasTempFile canvas, (err, tmpFile) ->
-      return callback err if err
+      if err
+        if err.code is 'ENOMEM'
+          console.log 'GetSaliency ERROR, sending empty saliency', err
+          out.send
+            saliency: null
+          do callback
+          return
+        return callback err
       runSaliency tmpFile, (err, val) ->
         return callback err if err
         out.send val
