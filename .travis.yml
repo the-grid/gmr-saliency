@@ -1,19 +1,27 @@
 language: node_js
 node_js:
-- '0.12'
+- 4.2
 sudo: false
 addons:
   apt:
+    sources:
+    - ubuntu-toolchain-r-test
     packages:
+    - libpng-dev
     - libopencv-dev
     - libcairo2-dev
     - libjpeg8-dev
     - libpango1.0-dev
     - libgif-dev
     - build-essential
-    - g++
+    - g++-4.8
+env:
+  matrix:
+    - CXX=g++-4.8
+before_install:
+  - npm cache clean
 before_script:
-- npm install -g grunt-cli node-gyp
+  - npm install -g grunt-cli node-gyp
 deploy:
   provider: npm
   email: vilson@void.cc

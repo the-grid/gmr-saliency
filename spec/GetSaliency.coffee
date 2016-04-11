@@ -186,3 +186,17 @@ describe 'GetSaliency component', ->
         inImage.beginGroup 3
         inImage.send canvas
         inImage.endGroup()
+  describe 'when passed a small gif', ->
+    input = 'small.gif'
+
+    it 'should extract the salient region in a reasonable time', (done) ->
+      @timeout 30000
+      error.once 'data', (err) ->
+        console.log 'err', err
+      out.once 'data', (res) ->
+        chai.expect(res).to.be.an 'object'
+        done()
+      testutils.getCanvasWithImageNoShift input, (canvas) ->
+        inImage.beginGroup 4
+        inImage.send canvas
+        inImage.endGroup()
