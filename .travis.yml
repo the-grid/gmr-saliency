@@ -21,6 +21,7 @@ env:
 before_install:
   - npm cache clean
 before_script:
+  - node-gyp clean
   - npm install -g grunt-cli
 deploy:
   provider: npm
