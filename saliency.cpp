@@ -13,7 +13,7 @@
 // #define DEBUG
 #undef DEBUG
 
-#define MINSIZE 50
+#define MINSIZE 100
 
 using namespace std;
 
