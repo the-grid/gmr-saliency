@@ -24,7 +24,7 @@
     "grunt-node-gyp": "^3.0.0",
     "grunt-noflo-manifest": "^0.1.11",
     "mocha": "^2.4.4",
-    "noflo-canvas": "^0.2.0"
+    "noflo-canvas": "^0.2.2"
   },
   "dependencies": {
     "noflo": "~0.5.21",
