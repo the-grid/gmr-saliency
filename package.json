@@ -1,7 +1,7 @@
 {
   "name": "gmr-saliency",
   "description": "GMR Saliency Map",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "author": {
     "name": "Vilson Vieira",
     "email": "vilson@void.cc"
@@ -27,7 +27,7 @@
     "noflo-canvas": "^0.2.0"
   },
   "dependencies": {
-    "noflo": "^0.5.21",
+    "noflo": "0.x >= 0.5",
     "temporary": "~0.0.8"
   },
   "keywords": [
