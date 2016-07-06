@@ -61,7 +61,7 @@ exports.getComponent = ->
 
   noflo.helpers.WirePattern c,
     in: 'canvas'
-    out: 'out'
+    out: [ 'out', 'error' ]
     forwardGroups: true
     async: true
   , (canvas, groups, out, callback) ->
@@ -73,9 +73,14 @@ exports.getComponent = ->
             saliency: null
           do callback
           return
-        return callback err
+        out.error.send err
+        do callback
+        return
       runSaliency tmpFile, (err, val) ->
-        return callback err if err
-        out.send val
+        if err
+          out.error.send err
+          do callback
+          return
+        out.out.send val
         do callback
   c
